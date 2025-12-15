@@ -1,4 +1,5 @@
 import React from "react";
+
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -14,6 +15,13 @@ import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import AdminUserDetailsPage from "./pages/AdminUserDetailsPage";
+
+import FaqPage from "./pages/FaqPage";
+import TodoList from "./pages/TodoList";
+import ClassSchedule from "./pages/ClassSchedule";
+import EventCalendar from "./pages/EventCalendar";
+import ReportPage from "./pages/ReportPage";
+
 
 const AuthLayout = ({ children }) => (
   <div className="app-shell">
@@ -52,15 +60,22 @@ const App = () => {
           }
         />
 
-        {/* Student dashboard full-screen */}
+        {/* Student dashboard */}
         <Route path="/dashboard" element={<DashboardPage />} />
 
-        {/* Faculty dashboard placeholder */}
+        {/* Student feature routes */}
+        <Route path="/faq" element={<FaqPage />} />
+        <Route path="/todo" element={<TodoList />} />
+        <Route path="/classes" element={<ClassSchedule />} />
+        <Route path="/events" element={<EventCalendar />} />
+        <Route path="/report" element={<ReportPage />} />
+
+        {/* Faculty & club admin */}
         <Route path="/faculty" element={<FacultyDashboardPlaceholder />} />
         <Route path="/club-admin" element={<ClubAdminDashboardPage />} />
-        <Route path="/admin/club-posts" element={<AdminClubPostsPage />} />
 
-        {/* Admin dashboard and user management (with sidebar layout) */}
+        {/* Admin routes */}
+        <Route path="/admin/club-posts" element={<AdminClubPostsPage />} />
         <Route
           path="/admin"
           element={
@@ -102,7 +117,7 @@ const App = () => {
           }
         />
 
-        {/* Default route -> login */}
+        {/* Default route */}
         <Route
           path="/"
           element={
@@ -112,6 +127,7 @@ const App = () => {
           }
         />
       </Routes>
+
     </Router>
   );
 };

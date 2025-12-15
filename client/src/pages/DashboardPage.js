@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 
 const DashboardPage = () => {
   const [user, setUser] = useState(null);
@@ -54,17 +56,41 @@ const DashboardPage = () => {
           <div>
             <div className="sidebar-section-title">General</div>
             <ul className="sidebar-menu">
-              <li className="sidebar-item active">Dashboard</li>
-              <li className="sidebar-item disabled">Activities</li>
-              <li className="sidebar-item disabled">Documents</li>
+              <li className="sidebar-item">
+                <Link to="/dashboard">Dashboard</Link>
+              </li>
+
+              <li className="sidebar-item">
+                <Link to="/classes">Class Schedule</Link>
+              </li>
+
+              <li className="sidebar-item">
+                <Link to="/todo">To-Do List</Link>
+              </li>
+
+              <li className="sidebar-item">
+                <Link to="/events">Event Calendar</Link>
+              </li>
+
+              <li className="sidebar-item">
+                <Link to="/faq">Help / FAQ</Link>
+              </li>
+
+              <li className="sidebar-item">
+                <Link to="/report">Report Generator</Link>
+              </li>
             </ul>
+
           </div>
 
           <div style={{ marginTop: "auto" }}>
             <div className="sidebar-section-title">Settings</div>
             <ul className="sidebar-menu">
               <li className="sidebar-item disabled">General Settings</li>
-              <li className="sidebar-item disabled">Get Help</li>
+              <li className="sidebar-item">
+               <Link to="/faq">Get Help</Link>
+              </li>
+
               <li className="sidebar-item disabled">Profile Settings</li>
             </ul>
           </div>
@@ -101,10 +127,26 @@ const DashboardPage = () => {
         <div>
           <div className="sidebar-section-title">General</div>
           <ul className="sidebar-menu">
-            <li className="sidebar-item active">Dashboard</li>
-            <li className="sidebar-item disabled">Activities</li>
-            <li className="sidebar-item disabled">Documents</li>
+            <li className="sidebar-item active">
+              <Link to="/dashboard">Dashboard</Link>
+            </li>
+
+            <li className="sidebar-item">
+              <Link to="/faq">Help / FAQ</Link>
+            </li>
+
+            <li className="sidebar-item">
+              <Link to="/todo">To-Do List</Link>
+            </li>
+
+            <li className="sidebar-item">
+              <Link to="/classes">Class Schedule</Link>
+            </li>
           </ul>
+
+
+
+
         </div>
 
         <div style={{ marginTop: "auto" }}>
