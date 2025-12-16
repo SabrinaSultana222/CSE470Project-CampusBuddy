@@ -36,3 +36,79 @@
     transform: rotate(360deg);
   }
 }
+/* ============================= */
+/* Feature Pages (FAQ, Todo, Class, Events, Report) */
+/* ============================= */
+
+.feature-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.feature-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.feature-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Card list item (FAQ, Todo, Class, Event items) */
+.feature-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+}
+
+/* Small badge (category, status, etc.) */
+.feature-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #eef2ff;
+  color: #1d4ed8;
+}
+
+/* FAQ Answer animation */
+.faq-answer {
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+
+.faq-answer.closed {
+  max-height: 0;
+}
+
+.faq-answer.open {
+  max-height: 500px;
+}
+
+/* Empty state */
+.feature-empty {
+  border: 1px dashed #d1d5db;
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  background-color: #f9fafb;
+}
+

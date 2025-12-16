@@ -4,7 +4,7 @@ const TodoList = () => {
   const [text, setText] = useState("");
   const [todos, setTodos] = useState([]);
 
-  
+  // Load from localStorage
   useEffect(() => {
     const savedTodos = localStorage.getItem("todos");
     if (savedTodos) {
@@ -12,7 +12,7 @@ const TodoList = () => {
     }
   }, []);
 
-
+  // Save to localStorage
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
@@ -49,44 +49,46 @@ const TodoList = () => {
   const completedCount = todos.filter((t) => t.completed).length;
 
   return (
-    <div className="feature-page" style={{ maxWidth: 700 }}>
-      <h2>To-Do List</h2>
+    <section className="dashboard-content-card feature-page">
+      {/* Header */}
+      <div className="feature-header">
+        <h2 className="feature-title">To-Do List</h2>
+      </div>
 
       {/* Add task */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+      <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
         <input
+          className="form-control"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Enter a task..."
-          style={{ flex: 1 }}
         />
-        <button onClick={addTodo}>Add</button>
+        <button
+          className="btn-primary"
+          style={{ width: "auto" }}
+          onClick={addTodo}
+        >
+          Add
+        </button>
       </div>
 
       {/* Summary */}
-      <p>
+      <p style={{ marginBottom: 16, color: "#374151" }}>
         Total tasks: <b>{todos.length}</b> | Completed:{" "}
         <b>{completedCount}</b>
       </p>
 
-      {/* Task list */}
-      {todos.length === 0 && <p>No tasks added yet.</p>}
+      {/* Empty state */}
+      {todos.length === 0 && (
+        <div className="feature-empty">
+          No tasks added yet.
+        </div>
+      )}
 
+      {/* Task list */}
       {todos.map((todo) => (
-        <div
-          key={todo.id}
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "10px 12px",
-            border: "1px solid #e5e7eb",
-            borderRadius: 8,
-            marginBottom: 8,
-            backgroundColor: todo.completed ? "#ecfeff" : "#ffffff",
-          }}
-        >
-          <span
+        <div key={todo.id} className="feature-card">
+          <div
             onClick={() => toggleTodo(todo.id)}
             style={{
               cursor: "pointer",
@@ -97,24 +99,18 @@ const TodoList = () => {
             }}
           >
             {todo.completed ? "✅" : "⬜"} {todo.title}
-          </span>
+          </div>
 
           <button
+            className="btn-danger"
+            style={{ marginTop: 8 }}
             onClick={() => deleteTodo(todo.id)}
-            style={{
-              background: "#ef4444",
-              color: "white",
-              border: "none",
-              borderRadius: 6,
-              padding: "4px 8px",
-              cursor: "pointer",
-            }}
           >
             Delete
           </button>
         </div>
       ))}
-    </div>
+    </section>
   );
 };
 

@@ -22,7 +22,6 @@ const FaqPage = () => {
       });
   }, []);
 
-  
   const filteredFaqs = faqs.filter((faq) => {
     const matchesSearch = faq.question
       .toLowerCase()
@@ -35,13 +34,18 @@ const FaqPage = () => {
   });
 
   return (
-    <div className="feature-page" style={{ maxWidth: 900 }}>
-      <h2>Help & Frequently Asked Questions</h2>
+    <section className="dashboard-content-card feature-page">
+      {/* Header */}
+      <div className="feature-header">
+        <h2 className="feature-title">
+          Help & Frequently Asked Questions
+        </h2>
+      </div>
 
       {/* Controls */}
-      <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+      <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
         <input
-          type="text"
+          className="form-control"
           placeholder="Search your question..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -49,6 +53,7 @@ const FaqPage = () => {
         />
 
         <select
+          className="form-select"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
@@ -59,55 +64,50 @@ const FaqPage = () => {
         </select>
       </div>
 
-      {/* Loading */}
+      {/* States */}
       {loading && <p>Loading FAQs...</p>}
 
-      {/* Error */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {/* No result */}
-      {!loading && filteredFaqs.length === 0 && (
-        <p>No matching questions found.</p>
+      {error && (
+        <p style={{ color: "#dc2626", fontWeight: 600 }}>
+          {error}
+        </p>
       )}
 
-      {/* FAQ List */}
+      {!loading && filteredFaqs.length === 0 && (
+        <div className="feature-empty">
+          No matching questions found.
+        </div>
+      )}
+
+      {/* FAQ LIST */}
       {filteredFaqs.map((faq, index) => (
         <div
           key={index}
-          style={{
-            border: "1px solid #e5e7eb",
-            borderRadius: 8,
-            marginBottom: 10,
-            padding: "12px 16px",
-            cursor: "pointer",
-            backgroundColor: "white",
-          }}
+          className="feature-card"
           onClick={() =>
             setOpenIndex(openIndex === index ? null : index)
           }
         >
           <h4 style={{ margin: 0 }}>{faq.question}</h4>
 
-          {openIndex === index && (
-            <p style={{ marginTop: 8, color: "#374151" }}>
-              {faq.answer}
-            </p>
-          )}
-
           {faq.category && (
-            <span
-              style={{
-                fontSize: 12,
-                color: "#2563eb",
-                fontWeight: 600,
-              }}
-            >
+            <span className="feature-badge">
               {faq.category}
             </span>
           )}
+
+          <div
+            className={`faq-answer ${
+              openIndex === index ? "open" : "closed"
+            }`}
+          >
+            <p style={{ marginTop: 10, color: "#374151" }}>
+              {faq.answer}
+            </p>
+          </div>
         </div>
       ))}
-    </div>
+    </section>
   );
 };
 
