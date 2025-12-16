@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import Chatbot from "../components/Chatbot";
+import Notifications from "../components/Notifications";
+import { useTheme } from "../context/ThemeContext";
+
 const DashboardPage = () => {
+  const { theme, toggleTheme } = useTheme(); // 🌙 theme context
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("Loading...");
   const navigate = useNavigate();
 
+  // 🔐 Fetch logged-in user
   useEffect(() => {
     const fetchMe = async () => {
       try {
@@ -30,6 +36,7 @@ const DashboardPage = () => {
     fetchMe();
   }, [navigate]);
 
+  // 🚪 Logout
   const handleLogout = async () => {
     try {
       await fetch("http://localhost:5000/api/auth/logout", {
@@ -37,51 +44,19 @@ const DashboardPage = () => {
         credentials: "include",
       });
       setUser(null);
-      setMessage("Logged out");
       navigate("/login");
     } catch {
       setMessage("Logout failed");
     }
   };
 
-  // While loading or unauthenticated, show a simple card
+  // ⏳ Loading
   if (!user) {
     return (
       <div className="dashboard-root">
-        <aside className="dashboard-sidebar">
-          <div className="sidebar-logo">Campus Buddy</div>
-
-          <div>
-            <div className="sidebar-section-title">General</div>
-            <ul className="sidebar-menu">
-              <li className="sidebar-item active">Dashboard</li>
-              <li className="sidebar-item disabled">Activities</li>
-              <li className="sidebar-item disabled">Documents</li>
-            </ul>
-          </div>
-
-          <div style={{ marginTop: "auto" }}>
-            <div className="sidebar-section-title">Settings</div>
-            <ul className="sidebar-menu">
-              <li className="sidebar-item disabled">General Settings</li>
-              <li className="sidebar-item disabled">Get Help</li>
-              <li className="sidebar-item disabled">Profile Settings</li>
-            </ul>
-          </div>
-        </aside>
-
         <main className="dashboard-main">
           <div className="dashboard-content-card">
-            <div className="dashboard-main-left">
-              <div className="welcome-banner">
-                <h2>Student Dashboard</h2>
-                <p>{message}</p>
-              </div>
-            </div>
-            <div className="dashboard-main-right">
-              <h3>Student details</h3>
-              <p className="detail-row">{message}</p>
-            </div>
+            <h2>{message}</h2>
           </div>
         </main>
       </div>
@@ -89,12 +64,12 @@ const DashboardPage = () => {
   }
 
   const isStudent = user.role === "student";
-  const isStudentClubAdmin = isStudent && user.isClubAdmin; // NEW
+  const isStudentClubAdmin = isStudent && user.isClubAdmin;
   const displayName = user.name || "Student";
 
   return (
     <div className="dashboard-root">
-      {/* Left sidebar */}
+      {/* 🟦 Sidebar */}
       <aside className="dashboard-sidebar">
         <div className="sidebar-logo">Campus Buddy</div>
 
@@ -117,97 +92,86 @@ const DashboardPage = () => {
         </div>
       </aside>
 
-      {/* Right main area */}
+      {/* 🟨 Main */}
       <main className="dashboard-main">
-        {/* Top bar */}
+        {/* 🔝 Top bar */}
         <div className="dashboard-topbar">
-          <div className="dashboard-top-left">
-            <h1 style={{ margin: 0, fontSize: 24 }}>
-              {displayName}&apos;s Dashboard
-            </h1>
+          <div>
+            <h1 style={{ margin: 0 }}>{displayName}&apos;s Dashboard</h1>
             <span className="dashboard-subtitle">
-              Welcome back, {displayName}. Here is an overview of your student
-              account.
+              Welcome back, {displayName}.
             </span>
           </div>
-          <div className="dashboard-top-right">
+
+          {/* ✅ FIXED: Theme toggle + user chip */}
+          <div className="dashboard-top-actions">
+            <button
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+            >
+              {theme === "dark" ? "☀ Light Mode" : "🌙 Dark Mode"}
+            </button>
+
             <div className="user-chip">
               {isStudent ? "Student" : user.role} · {user.bracuId}
             </div>
           </div>
         </div>
 
-        {/* Main content card */}
+        {/* 📦 Content */}
         <section className="dashboard-content-card">
-          {/* Left column: welcome and placeholders */}
+          {/* ⬅ LEFT */}
           <div className="dashboard-main-left">
             <div className="welcome-banner">
               <h2>Good day, {displayName}!</h2>
               <p>
-                Your personalized Campus Buddy space. Class schedule,
-                assignments, events and more will appear here as you build the
-                next features.
+                Your personalized Campus Buddy dashboard. Important tools and
+                assistants are available below.
               </p>
             </div>
 
-            {/* NEW: student + club admin message and link */}
             {isStudentClubAdmin && (
-              <div
-                className="club-admin-info"
-                style={{
-                  marginTop: "16px",
-                  padding: "12px 14px",
-                  borderRadius: "8px",
-                  border: "1px solid #e5e7eb",
-                  backgroundColor: "#eef2ff",
-                }}
-              >
-                <p style={{ margin: 0, marginBottom: 8, fontWeight: 500 }}>
-                  Admin of BRAC University Computer Club
-                </p>
-                <button
-                  type="button"
-                  className="btn-primary"
-                  style={{ width: "auto" }}
-                  onClick={() => navigate("/club-admin")}
-                >
-                  View club dashboard
+              <div className="club-admin-info">
+                <p>Club Admin Access</p>
+                <button onClick={() => navigate("/club-admin")}>
+                  View Club Dashboard
                 </button>
               </div>
             )}
 
-            <div className="empty-widgets-box">
-              This area will later show widgets such as:
-              <br />
-              • Today&apos;s classes / schedule
-              <br />
-              • Upcoming assignments and to‑dos
-              <br />
-              • Event calendar, lost &amp; found, and other modules
+            {/* 🤖 Chatbot */}
+            <div style={{ marginTop: 30 }}>
+              <Chatbot />
             </div>
           </div>
 
-          {/* Right column: student details */}
+          {/* ➡ RIGHT */}
           <div className="dashboard-main-right">
-            <h3>Student details</h3>
+            <h3>Student Details</h3>
+
             <div className="detail-row">
-              <span className="detail-label">Name: </span>
-              <span>{user.name}</span>
+              <strong>Name:</strong> {user.name}
             </div>
             <div className="detail-row">
-              <span className="detail-label">Student ID: </span>
-              <span>{user.bracuId}</span>
+              <strong>ID:</strong> {user.bracuId}
             </div>
             <div className="detail-row">
-              <span className="detail-label">Email: </span>
-              <span>{user.email}</span>
+              <strong>Email:</strong> {user.email}
             </div>
             <div className="detail-row">
-              <span className="detail-label">Role: </span>
-              <span>{user.role}</span>
+              <strong>Role:</strong> {user.role}
             </div>
 
-            <button type="button" className="btn-logout" onClick={handleLogout}>
+            {/* 🔔 Notifications */}
+            <div style={{ marginTop: 24 }}>
+              <Notifications />
+            </div>
+
+            <button
+              className="btn-logout"
+              style={{ marginTop: 20 }}
+              onClick={handleLogout}
+            >
               Logout
             </button>
           </div>

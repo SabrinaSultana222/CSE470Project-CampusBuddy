@@ -23,3 +23,51 @@ button {
   border-radius: 6px;
   border: none;
 }
+
+
+/* ============================= */
+/* DASHBOARD THEME FIXES */
+/* ============================= */
+
+.dashboard-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Student ID pill */
+.user-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+/* Theme toggle button */
+.theme-toggle-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #111827;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* 🌙 DARK MODE OVERRIDES */
+.app.dark .user-chip {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.app.dark .theme-toggle-btn {
+  background-color: #111827;
+  color: #f9fafb;
+  border: 1px solid #374151;
+}
+
+/* Optional: smoother hover */
+.theme-toggle-btn:hover {
+  opacity: 0.9;
+}

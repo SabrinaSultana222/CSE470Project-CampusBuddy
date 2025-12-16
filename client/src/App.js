@@ -1,10 +1,6 @@
-import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
 import "./App.css";
-
-// Your components
-import Chatbot from "./components/Chatbot";
-import Notifications from "./components/Notifications";
+import { useTheme } from "./context/ThemeContext";
 
 // Pages
 import LoginPage from "./pages/LoginPage";
@@ -20,35 +16,33 @@ import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import AdminUserDetailsPage from "./pages/AdminUserDetailsPage";
 
-/* Auth layout (Sabrina) + your theme toggle */
-const AuthLayout = ({ children, isDark, setIsDark }) => (
-  <div className={isDark ? "app dark" : "app light"}>
-    <div className="auth-container">
-      <header className="top-nav">
-        <h1 style={{ fontSize: 18, margin: 0 }}>Campus Buddy</h1>
+/* Auth layout (Login/Register wrapper) */
+const AuthLayout = ({ children }) => {
+  const { theme, toggleTheme } = useTheme();
 
-        <nav className="nav-links">
-          <NavLink to="/login">Login</NavLink>
-          <NavLink to="/register">Register</NavLink>
-        </nav>
+  return (
+    <div className={`app ${theme}`}>
+      <div className="auth-container">
+        <header className="top-nav">
+          <h1 style={{ fontSize: 18, margin: 0 }}>Campus Buddy</h1>
 
-        <button onClick={() => setIsDark(!isDark)}>
-          {isDark ? "Light" : "Dark"} Mode
-        </button>
-      </header>
+          <nav className="nav-links">
+            <NavLink to="/login">Login</NavLink>
+            <NavLink to="/register">Register</NavLink>
+          </nav>
 
-      {children}
+          <button onClick={toggleTheme}>
+            {theme === "dark" ? "Light" : "Dark"} Mode
+          </button>
+        </header>
 
-      {/* Your features */}
-      <Chatbot />
-      <Notifications />
+        {children}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const App = () => {
-  const [isDark, setIsDark] = useState(false);
-
   return (
     <Router>
       <Routes>
@@ -56,7 +50,7 @@ const App = () => {
         <Route
           path="/login"
           element={
-            <AuthLayout isDark={isDark} setIsDark={setIsDark}>
+            <AuthLayout>
               <LoginPage />
             </AuthLayout>
           }
@@ -64,7 +58,7 @@ const App = () => {
         <Route
           path="/register"
           element={
-            <AuthLayout isDark={isDark} setIsDark={setIsDark}>
+            <AuthLayout>
               <RegisterPage />
             </AuthLayout>
           }
@@ -106,7 +100,7 @@ const App = () => {
         <Route
           path="/"
           element={
-            <AuthLayout isDark={isDark} setIsDark={setIsDark}>
+            <AuthLayout>
               <LoginPage />
             </AuthLayout>
           }
