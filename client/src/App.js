@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
 import "./App.css";
 import { useTheme } from "./context/ThemeContext";
+import { ToastProvider } from "./context/ToastContext";
 
 // Pages
 import LoginPage from "./pages/LoginPage";
@@ -9,6 +10,10 @@ import DashboardPage from "./pages/DashboardPage";
 import FacultyDashboardPlaceholder from "./pages/FacultyDashboardPlaceholder";
 import ClubAdminDashboardPage from "./pages/ClubAdminDashboardPage";
 import AdminClubPostsPage from "./pages/AdminClubPostsPage";
+import Assignments from "./pages/Assignments";
+import GpaCalculator from "./pages/GpaCalculator";
+import LostFound from "./pages/LostFound";
+import ProfileSettings from "./pages/ProfileSettings";
 
 // Admin
 import AdminLayout from "./layouts/AdminLayout";
@@ -44,10 +49,11 @@ const AuthLayout = ({ children }) => {
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        {/* Auth pages */}
-        <Route
+    <ToastProvider>
+      <Router>
+        <Routes>
+          {/* Auth pages */}
+          <Route
           path="/login"
           element={
             <AuthLayout>
@@ -69,6 +75,12 @@ const App = () => {
         <Route path="/faculty" element={<FacultyDashboardPlaceholder />} />
         <Route path="/club-admin" element={<ClubAdminDashboardPage />} />
         <Route path="/admin/club-posts" element={<AdminClubPostsPage />} />
+        
+        {/* Feature pages */}
+        <Route path="/assignments" element={<Assignments />} />
+        <Route path="/gpa" element={<GpaCalculator />} />
+        <Route path="/lost-found" element={<LostFound />} />
+        <Route path="/profile-settings" element={<ProfileSettings />} />
 
         {/* Admin routes */}
         <Route
@@ -104,9 +116,10 @@ const App = () => {
               <LoginPage />
             </AuthLayout>
           }
-        />
-      </Routes>
-    </Router>
+          />
+        </Routes>
+      </Router>
+    </ToastProvider>
   );
 };
 

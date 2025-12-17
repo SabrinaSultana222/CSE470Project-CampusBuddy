@@ -8,7 +8,7 @@ const AdminClubPostsPage = () => {
   const fetchPosts = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/club-posts${
+        `http://localhost:5001/api/admin/club-posts${
           statusFilter ? `?status=${statusFilter}` : ""
         }`,
         { credentials: "include" }
@@ -45,7 +45,7 @@ const AdminClubPostsPage = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/club-posts/${postId}/status`,
+        `http://localhost:5001/api/admin/club-posts/${postId}/status`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

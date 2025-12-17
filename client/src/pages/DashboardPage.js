@@ -15,7 +15,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/auth/me", {
+        const res = await fetch("http://localhost:5001/api/auth/me", {
           credentials: "include",
         });
 
@@ -39,7 +39,7 @@ const DashboardPage = () => {
   // 🚪 Logout
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:5000/api/auth/logout", {
+      await fetch("http://localhost:5001/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -77,8 +77,9 @@ const DashboardPage = () => {
           <div className="sidebar-section-title">General</div>
           <ul className="sidebar-menu">
             <li className="sidebar-item active">Dashboard</li>
-            <li className="sidebar-item disabled">Activities</li>
-            <li className="sidebar-item disabled">Documents</li>
+            <li className="sidebar-item" onClick={() => navigate('/assignments')} style={{ cursor: 'pointer' }}>📋 Assignments</li>
+            <li className="sidebar-item" onClick={() => navigate('/gpa')} style={{ cursor: 'pointer' }}>📊 GPA Calculator</li>
+            <li className="sidebar-item" onClick={() => navigate('/lost-found')} style={{ cursor: 'pointer' }}>🔍 Lost & Found</li>
           </ul>
         </div>
 
@@ -87,7 +88,7 @@ const DashboardPage = () => {
           <ul className="sidebar-menu">
             <li className="sidebar-item disabled">General Settings</li>
             <li className="sidebar-item disabled">Get Help</li>
-            <li className="sidebar-item disabled">Profile Settings</li>
+            <li className="sidebar-item" onClick={() => navigate('/profile-settings')} style={{ cursor: 'pointer' }}>⚙️ Profile Settings</li>
           </ul>
         </div>
       </aside>

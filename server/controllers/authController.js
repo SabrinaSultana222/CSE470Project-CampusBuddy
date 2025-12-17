@@ -110,10 +110,11 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    generateToken(res, user._id, user.role);
+    const token = generateToken(res, user._id, user.role);
 
     return res.json({
       message: "Login successful",
+      token, // Include token in response for localStorage storage
       user: {
         id: user._id,
         name: user.name,

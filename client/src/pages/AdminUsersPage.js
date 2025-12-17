@@ -21,7 +21,7 @@ const AdminUsersPage = () => {
       setLoading(true);
 
       const res = await fetch(
-        `http://localhost:5000/api/admin/users${
+        `http://localhost:5001/api/admin/users${
           roleFilter ? `?role=${roleFilter}` : ""
         }`,
         { credentials: "include" }
@@ -62,7 +62,7 @@ const AdminUsersPage = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/users/${user._id}/status`,
+        `http://localhost:5001/api/admin/users/${user._id}/status`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -98,7 +98,7 @@ const AdminUsersPage = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/users/${user._id}`,
+        `http://localhost:5001/api/admin/users/${user._id}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -144,7 +144,7 @@ const AdminUsersPage = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/users/${user._id}/role`,
+        `http://localhost:5001/api/admin/users/${user._id}/role`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

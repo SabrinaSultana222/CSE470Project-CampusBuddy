@@ -8,7 +8,10 @@ export const ThemeProvider = ({ children }) => {
   });
 
   useEffect(() => {
+    // Apply theme to both body and html for maximum compatibility
     document.body.className = theme;
+    document.documentElement.className = theme;
+    document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
 

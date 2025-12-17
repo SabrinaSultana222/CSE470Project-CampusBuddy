@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
+import { setToken, setUser } from "../utils/api";
 
 const LoginPage = () => {
   const [form, setForm] = useState({
@@ -19,7 +20,7 @@ const LoginPage = () => {
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -32,6 +33,15 @@ const LoginPage = () => {
         setMessage(data.message || "Login failed");
         return;
       }
+      
+      // Store token and user data in localStorage for the Assignments/GPA/etc pages
+      if (data.token) {
+        setToken(data.token);
+      }
+      if (data.user) {
+        setUser(data.user);
+      }
+      
       setMessage(`Welcome, ${data.user.name} (${data.user.role})`);
       if (data.user.role === "student") {
       navigate("/dashboard");

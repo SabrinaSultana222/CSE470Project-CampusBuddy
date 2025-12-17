@@ -12,7 +12,7 @@ const AdminUserDetailsPage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/admin/users/${id}`, {
+        const res = await fetch(`http://localhost:5001/api/admin/users/${id}`, {
           credentials: "include",
         });
         const data = await res.json();

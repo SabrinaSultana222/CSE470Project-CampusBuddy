@@ -14,7 +14,7 @@ const ClubAdminDashboardPage = () => {
 
   const fetchMyPosts = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/club-posts/my", {
+      const res = await fetch("http://localhost:5001/api/club-posts/my", {
         credentials: "include",
       });
       const data = await res.json();
@@ -42,7 +42,7 @@ const ClubAdminDashboardPage = () => {
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/club-posts", {
+      const res = await fetch("http://localhost:5001/api/club-posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
