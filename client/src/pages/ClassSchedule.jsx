@@ -13,7 +13,7 @@ const ClassSchedule = () => {
 
   // Auth check
   useEffect(() => {
-    fetch("http://localhost:5000/api/auth/me", {
+    fetch("http://localhost:5001/api/auth/me", {
       credentials: "include",
     })
       .then((res) => {

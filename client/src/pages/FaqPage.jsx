@@ -11,7 +11,7 @@ const FaqPage = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/faqs")
+      .get("http://localhost:5001/api/faqs")
       .then((res) => {
         setFaqs(res.data);
         setLoading(false);

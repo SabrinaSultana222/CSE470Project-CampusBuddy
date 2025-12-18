@@ -145,7 +145,7 @@ const DashboardPage = () => {
                 Your personalized Campus Buddy dashboard. Important tools and
                 assistants are available below.
               </p>
-            </div>
+          </div>
 
 
             {/* EVENT CALENDAR WIDGET */}
@@ -174,7 +174,7 @@ const DashboardPage = () => {
               </button>
             </div>
 
-             {isStudentClubAdmin && (
+            {isStudentClubAdmin && (
               <div className="club-admin-info">
                 <p>Club Admin Access</p>
                 <button onClick={() => navigate("/club-admin")}>
@@ -183,6 +183,7 @@ const DashboardPage = () => {
               </div>
             )}
 
+            {/* ➡ RIGHT */}
 
 
             {/* Placeholder */}
@@ -196,7 +197,8 @@ const DashboardPage = () => {
             <div style={{ marginTop: 30 }}>
               <Chatbot />
             </div>
-          
+
+          </div>
 
           {/* ➡ RIGHT */}
           <div className="dashboard-main-right">
