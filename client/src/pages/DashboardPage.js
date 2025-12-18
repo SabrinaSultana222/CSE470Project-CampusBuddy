@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import Chatbot from "../components/Chatbot";
 import Notifications from "../components/Notifications";
@@ -23,17 +23,15 @@ const DashboardPage = () => {
 
         if (!res.ok) {
           navigate("/login");
-          return;
+          return null;
         }
-
         setUser(data);
         setMessage("");
-      } catch {
+        } catch {
         setMessage("Network error");
       }
     };
-
-    fetchMe();
+     fetchMe();
   }, [navigate]);
 
   // 🚪 Logout
@@ -76,7 +74,24 @@ const DashboardPage = () => {
         <div>
           <div className="sidebar-section-title">General</div>
           <ul className="sidebar-menu">
-            <li className="sidebar-item active">Dashboard</li>
+            <li className="sidebar-item active">
+              <Link to="/dashboard">Dashboard</Link>
+            </li>
+            <li className="sidebar-item">
+              <Link to="/classes">Class Schedule</Link>
+            </li>
+            <li className="sidebar-item">
+              <Link to="/todo">To-Do List</Link>
+            </li>
+            <li className="sidebar-item">
+              <Link to="/events">Event Calendar</Link>
+            </li>
+            <li className="sidebar-item">
+              <Link to="/faq">Help / FAQ</Link>
+            </li>
+            <li className="sidebar-item">
+              <Link to="/report">Report Generator</Link>
+            </li>
             <li className="sidebar-item" onClick={() => navigate('/assignments')} style={{ cursor: 'pointer' }}>📋 Assignments</li>
             <li className="sidebar-item" onClick={() => navigate('/gpa')} style={{ cursor: 'pointer' }}>📊 GPA Calculator</li>
             <li className="sidebar-item" onClick={() => navigate('/lost-found')} style={{ cursor: 'pointer' }}>🔍 Lost & Found</li>
@@ -123,6 +138,7 @@ const DashboardPage = () => {
         <section className="dashboard-content-card">
           {/* ⬅ LEFT */}
           <div className="dashboard-main-left">
+            {/* Welcome */}
             <div className="welcome-banner">
               <h2>Good day, {displayName}!</h2>
               <p>
@@ -131,7 +147,34 @@ const DashboardPage = () => {
               </p>
             </div>
 
-            {isStudentClubAdmin && (
+
+            {/* EVENT CALENDAR WIDGET */}
+            <div
+              style={{
+                marginTop: 16,
+                padding: 16,
+                borderRadius: 16,
+                backgroundColor: "#ffffff",
+                border: "1px solid #e5e7eb",
+              }}
+            >
+              <h3 style={{ marginTop: 0 }}>📅 Upcoming Events</h3>
+
+              <ul style={{ listStyle: "none", padding: 0 }}>
+                <li>🎓 Career Fair – 10 Oct</li>
+                <li>🎉 Club Fest – 15 Oct</li>
+                <li>💻 Hackathon – 20 Oct</li>
+              </ul>
+
+              <button
+                className="btn-secondary"
+                onClick={() => navigate("/events")}
+              >
+                View full calendar
+              </button>
+            </div>
+
+             {isStudentClubAdmin && (
               <div className="club-admin-info">
                 <p>Club Admin Access</p>
                 <button onClick={() => navigate("/club-admin")}>
@@ -140,14 +183,25 @@ const DashboardPage = () => {
               </div>
             )}
 
+
+
+            {/* Placeholder */}
+            <div className="empty-widgets-box">
+              More widgets coming soon:
+              <br />• Assignments
+              <br />• To-dos
+              <br />• Reports
+            </div>
             {/* 🤖 Chatbot */}
             <div style={{ marginTop: 30 }}>
               <Chatbot />
             </div>
-          </div>
+          
 
           {/* ➡ RIGHT */}
           <div className="dashboard-main-right">
+            <h3>Student Details</h3>
+
             <h3>Student Details</h3>
 
             <div className="detail-row">

@@ -648,3 +648,120 @@ body {
     width: 100%;
   }
 }
+/* ===============================
+   FAQ EXPAND / COLLAPSE ANIMATION
+================================ */
+
+.faq-answer {
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.35s ease;
+}
+
+.faq-answer.closed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.faq-answer.open {
+  max-height: 300px; /* enough for answer */
+  opacity: 1;
+  margin-top: 10px;
+}
+/* FAQ animation */
+.faq-answer {
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.35s ease;
+}
+
+.faq-answer.closed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.faq-answer.open {
+  max-height: 300px;
+  opacity: 1;
+}
+
+.feature-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+/* ===============================
+   FEATURE PAGES (FAQ, TODO, etc)
+================================ */
+
+.feature-card {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+}
+
+/* FAQ item card */
+.faq-item {
+  background-color: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.faq-item:hover {
+  background-color: #eef2ff;
+  border-color: var(--accent);
+}
+
+/* Question */
+.faq-question {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* Answer animation */
+.faq-answer {
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.35s ease;
+}
+
+.faq-answer.closed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.faq-answer.open {
+  max-height: 300px;
+  opacity: 1;
+}
+
+/* Category badge */
+.feature-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+/* Feature page title */
+.feature-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #111827;
+}
+

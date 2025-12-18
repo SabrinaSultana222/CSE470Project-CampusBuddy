@@ -1,3 +1,4 @@
+import React from "react";
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
 import "./App.css";
 import { useTheme } from "./context/ThemeContext";
@@ -20,6 +21,12 @@ import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import AdminUserDetailsPage from "./pages/AdminUserDetailsPage";
+import FaqPage from "./pages/FaqPage";
+import TodoList from "./pages/TodoList";
+import ClassSchedule from "./pages/ClassSchedule";
+import EventCalendar from "./pages/EventCalendar";
+import ReportPage from "./pages/ReportPage";
+
 
 /* Auth layout (Login/Register wrapper) */
 const AuthLayout = ({ children }) => {
@@ -81,43 +88,67 @@ const App = () => {
             }
           />
 
-          {/* Dashboards */}
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/faculty" element={<FacultyDashboardPage />} />
-          <Route path="/club-admin" element={<ClubAdminDashboardPage />} />
-          <Route path="/admin/club-posts" element={<AdminClubPostsPage />} />
+        {/* Student dashboard */}
+        <Route path="/dashboard" element={<DashboardPage />} />
 
-          {/* Feature pages */}
+        {/* Student feature routes */}
+        <Route path="/faq" element={<FaqPage />} />
+        <Route path="/todo" element={<TodoList />} />
+        <Route path="/classes" element={<ClassSchedule />} />
+        <Route path="/events" element={<EventCalendar />} />
+        <Route path="/report" element={<ReportPage />} />
+
+        {/* Faculty & club admin */}
+        <Route path="/faculty" element={<FacultyDashboardPage />} />
+        <Route path="/club-admin" element={<ClubAdminDashboardPage />} />
+
+        {/* Admin routes */}
+        <Route path="/admin/club-posts" element={<AdminClubPostsPage />} />
+        {/* Feature pages */}
           <Route path="/assignments" element={<Assignments />} />
           <Route path="/gpa" element={<GpaCalculator />} />
           <Route path="/lost-found" element={<LostFound />} />
           <Route path="/profile-settings" element={<ProfileSettings />} />
-
-          {/* Admin routes */}
-          <Route
-            path="/admin"
-            element={
-              <AdminLayout>
-                <AdminDashboardPage />
-              </AdminLayout>
-            }
-          />
-          <Route
-            path="/admin/users"
-            element={
-              <AdminLayout>
-                <AdminUsersPage />
-              </AdminLayout>
-            }
-          />
-          <Route
-            path="/admin/users/:id"
-            element={
-              <AdminLayout>
-                <AdminUserDetailsPage />
-              </AdminLayout>
-            }
-          />
+        <Route
+          path="/admin"
+          element={
+            <AdminLayout>
+              <AdminDashboardPage />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <AdminLayout>
+              <AdminUsersPage />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/users/students"
+          element={
+            <AdminLayout>
+              <AdminUsersPage />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/users/faculty"
+          element={
+            <AdminLayout>
+              <AdminUsersPage />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/users/:id"
+          element={
+            <AdminLayout>
+              <AdminUserDetailsPage />
+            </AdminLayout>
+          }
+        />
 
           {/* Default */}
           <Route
