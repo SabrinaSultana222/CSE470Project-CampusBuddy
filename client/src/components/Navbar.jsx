@@ -14,27 +14,27 @@ const Navbar = ({ title = 'CampusBuddy' }) => {
     // Initial auth check
     setToken(getToken());
     setUser(getUser());
-    
+
     const updateAuth = () => {
       setToken(getToken());
       setUser(getUser());
     };
-    
+
     // Listen for storage events (cross-tab sync)
     const handleStorage = (e) => {
       if (e.key && e.key.startsWith('campusbuddy.')) {
         updateAuth();
       }
     };
-    
+
     // Listen for custom auth events (same-tab login/logout)
     const handleAuthChange = () => {
       updateAuth();
     };
-    
+
     window.addEventListener('storage', handleStorage);
     window.addEventListener('authChange', handleAuthChange);
-    
+
     return () => {
       window.removeEventListener('storage', handleStorage);
       window.removeEventListener('authChange', handleAuthChange);
@@ -46,7 +46,7 @@ const Navbar = ({ title = 'CampusBuddy' }) => {
     removeToken();
     setToken(null);
     setUser(null);
-    
+
     // Dispatch event after state update, then navigate
     setTimeout(() => {
       window.dispatchEvent(new CustomEvent('authChange', { detail: { user: null } }));
@@ -77,12 +77,23 @@ const Navbar = ({ title = 'CampusBuddy' }) => {
             <>
               <span className="navbar-user">
                 👤 {user ? user.name : 'User'}
-                {user && user.studentId && <span className="navbar-student-id"> (ID: {user.studentId})</span>}
+                {user && user.studentId && (
+                  <span className="navbar-student-id"> (ID: {user.studentId})</span>
+                )}
               </span>
-              <button className="btn-logout" onClick={handleLogout} title="Logout from your account">🚪 Logout</button>
+              <button
+                className="btn-logout"
+                onClick={handleLogout}
+                title="Logout from your account"
+              >
+                🚪 Logout
+              </button>
             </>
           ) : (
-            <Link to="/auth" className="btn-login">🔐 Login</Link>
+            // only change: /auth -> /login
+            <Link to="/login" className="btn-login">
+              🔐 Login
+            </Link>
           )}
         </div>
       </div>

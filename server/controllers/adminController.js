@@ -1,6 +1,6 @@
 // server/controllers/adminController.js
 const User = require("../models/user");
-const ClubPost = require("../models/clubpost"); // NEW
+const ClubPost = require("../models/clubpost");
 
 // GET /api/admin/users?role=student|faculty|clubAdmin|admin
 const getUsers = async (req, res) => {
@@ -33,7 +33,7 @@ const getUserById = async (req, res) => {
   }
 };
 
-// PATCH /api/admin/users/:id/status   { isActive: boolean }
+// PATCH /api/admin/users/:id/status { isActive: boolean }
 const updateUserStatus = async (req, res) => {
   try {
     const { isActive } = req.body;
@@ -61,8 +61,7 @@ const updateUserStatus = async (req, res) => {
   }
 };
 
-// PATCH /api/admin/users/:id/role   { isClubAdmin: boolean }
-// Here we *do not* change role to "clubAdmin"; we only toggle the flag.
+// PATCH /api/admin/users/:id/role { isClubAdmin: boolean }
 const updateUserRole = async (req, res) => {
   try {
     const { isClubAdmin } = req.body;
@@ -78,21 +77,18 @@ const updateUserRole = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Prevent admin from changing their own role/flags here
     if (req.user && req.user._id.toString() === user._id.toString()) {
       return res
         .status(400)
         .json({ message: "You cannot change your own role/flags" });
     }
 
-    // Faculty should not be turned into club admin via this action
     if (user.role === "faculty") {
       return res.status(400).json({
         message: "Faculty cannot be assigned club admin privileges here",
       });
     }
 
-    // Only students (or existing club-admin students) can be toggled
     if (user.role !== "student") {
       return res.status(400).json({
         message: "Only students can be promoted to club admin",
@@ -119,7 +115,6 @@ const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // prevent admin from deleting themselves
     if (req.user && req.user._id.toString() === id) {
       return res
         .status(400)
@@ -138,7 +133,7 @@ const deleteUser = async (req, res) => {
   }
 };
 
-// NEW: GET /api/admin/club-posts?status=pending|approved|rejected
+// GET /api/admin/club-posts?status=pending|approved|rejected
 const getClubPostsForAdmin = async (req, res) => {
   try {
     const { status } = req.query;
@@ -155,7 +150,7 @@ const getClubPostsForAdmin = async (req, res) => {
   }
 };
 
-// NEW: PATCH /api/admin/club-posts/:id/status   { status: "pending"|"approved"|"rejected" }
+// PATCH /api/admin/club-posts/:id/status { status: "pending"|"approved"|"rejected" }
 const updateClubPostStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -194,6 +189,6 @@ module.exports = {
   updateUserStatus,
   updateUserRole,
   deleteUser,
-  getClubPostsForAdmin,   // NEW
-  updateClubPostStatus,   // NEW
+  getClubPostsForAdmin,
+  updateClubPostStatus,
 };

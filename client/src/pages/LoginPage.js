@@ -6,7 +6,7 @@ const LoginPage = () => {
   const [form, setForm] = useState({
     email: "",
     password: "",
-    role: "student", // can be student / faculty / clubAdmin / admin
+    role: "student",
   });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const LoginPage = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(form), // includes role, checked on backend
+        body: JSON.stringify(form),
       });
 
       const data = await res.json();
@@ -33,32 +33,31 @@ const LoginPage = () => {
         setMessage(data.message || "Login failed");
         return;
       }
-      
-      // Store token and user data in localStorage for the Assignments/GPA/etc pages
+
       if (data.token) {
         setToken(data.token);
       }
       if (data.user) {
         setUser(data.user);
       }
-      
+
       setMessage(`Welcome, ${data.user.name} (${data.user.role})`);
       if (data.user.role === "student") {
-      navigate("/dashboard");
-}     else if (data.user.role === "faculty") {
-      navigate("/faculty");
-}     else if (data.user.role === "admin") {
-      navigate("/admin");   
-}     else {
-      navigate("/");
-}
- }    catch {
+        navigate("/dashboard");
+      } else if (data.user.role === "faculty") {
+        navigate("/faculty");
+      } else if (data.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+    } catch {
       setMessage("Network error");
     }
   };
 
   return (
-    <div>
+    <div className="auth-container">
       <h2 className="auth-title">Login</h2>
       <p className="auth-subtitle">Sign in to your Campus Buddy account.</p>
 

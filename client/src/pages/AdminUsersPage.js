@@ -28,8 +28,9 @@ const AdminUsersPage = () => {
       );
 
       if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
         setLoading(false);
-        setToast("Failed to load users");
+        setToast(data.message || "Failed to load users");
         return;
       }
 
@@ -122,7 +123,6 @@ const AdminUsersPage = () => {
     navigate(`/admin/users/${user._id}`);
   };
 
-  // NEW: toggle student club-admin flag (isClubAdmin)
   const handleToggleClubAdmin = async (user, makeClubAdmin) => {
     if (user.role === "faculty") {
       showToast("Faculty cannot be assigned club admin here");
