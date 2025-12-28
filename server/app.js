@@ -3,6 +3,7 @@ const cors = require('cors');
 const routes = require('./routes'); // routes/index.js
 const cookieParser = require("cookie-parser");
 
+
 const app = express();
 
 // CORS: allow React frontend (http://localhost:3000) and cookies
@@ -15,6 +16,7 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
+
 
 // Base API path
 app.use('/api', routes);

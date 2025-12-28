@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { setToken, setUser } from "../utils/api";
 
 const LoginPage = () => {
@@ -42,6 +42,7 @@ const LoginPage = () => {
       }
 
       setMessage(`Welcome, ${data.user.name} (${data.user.role})`);
+
       if (data.user.role === "student") {
         navigate("/dashboard");
       } else if (data.user.role === "faculty") {
@@ -57,53 +58,63 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="auth-container">
-      <h2 className="auth-title">Login</h2>
-      <p className="auth-subtitle">Sign in to your Campus Buddy account.</p>
+    <div className="login-page-root">
+      {/* Top heading */}
+      <div className="login-page-header">
+        <h1 className="login-page-title">Welcome Back</h1>
+        <p className="login-page-subtitle">
+          Sign in to continue to your Campus Buddy dashboard.
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            className="form-control"
-            name="email"
-            type="email"
-            value={form.email}
-            onChange={handleChange}
-          />
-        </div>
+      {/* Centered card */}
+      <div className="login-card">
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              className="form-control"
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+            />
+          </div>
 
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            className="form-control"
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-          />
-        </div>
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              className="form-control"
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+            />
+          </div>
 
-        <div className="form-group">
-          <label>Role</label>
-          <select
-            className="form-select"
-            name="role"
-            value={form.role}
-            onChange={handleChange}
-          >
-            <option value="student">Student</option>
-            <option value="faculty">Faculty</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
+          <div className="form-group">
+            <label>Role</label>
+            <select
+              className="form-select"
+              name="role"
+              value={form.role}
+              onChange={handleChange}
+            >
+              <option value="student">Student</option>
+              <option value="faculty">Faculty</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
 
-        <button type="submit" className="btn-primary">
-          Login
-        </button>
-      </form>
+          <button type="submit" className="btn-primary login-submit-btn">
+            Login
+          </button>
+        </form>
 
-      {message && <p className="message">{message}</p>}
+        {message && <p className="message">{message}</p>}
+      </div>
+
+      
     </div>
   );
 };

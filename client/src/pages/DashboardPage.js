@@ -27,11 +27,11 @@ const DashboardPage = () => {
         }
         setUser(data);
         setMessage("");
-        } catch {
+      } catch {
         setMessage("Network error");
       }
     };
-     fetchMe();
+    fetchMe();
   }, [navigate]);
 
   // 🚪 Logout
@@ -65,6 +65,9 @@ const DashboardPage = () => {
   const isStudentClubAdmin = isStudent && user.isClubAdmin;
   const displayName = user.name || "Student";
 
+  // helper style so links look like buttons (no pink/underline)
+  const linkStyle = { textDecoration: "none", color: "inherit" };
+
   return (
     <div className="dashboard-root">
       {/* 🟦 Sidebar */}
@@ -75,35 +78,102 @@ const DashboardPage = () => {
           <div className="sidebar-section-title">General</div>
           <ul className="sidebar-menu">
             <li className="sidebar-item active">
-              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/dashboard" style={linkStyle}>
+                🏠 Dashboard
+              </Link>
             </li>
             <li className="sidebar-item">
-              <Link to="/classes">Class Schedule</Link>
+              <Link to="/classes" style={linkStyle}>
+                📚 Class Schedule
+              </Link>
             </li>
             <li className="sidebar-item">
-              <Link to="/todo">To-Do List</Link>
+              <Link to="/todo" style={linkStyle}>
+                ✅ To-Do List
+              </Link>
             </li>
             <li className="sidebar-item">
-              <Link to="/events">Event Calendar</Link>
+              <Link to="/events" style={linkStyle}>
+                📅 Event Calendar
+              </Link>
             </li>
             <li className="sidebar-item">
-              <Link to="/faq">Help / FAQ</Link>
+              <Link to="/faq" style={linkStyle}>
+                ❓ Help / FAQ
+              </Link>
             </li>
             <li className="sidebar-item">
-              <Link to="/report">Report Generator</Link>
+              <Link to="/report" style={linkStyle}>
+                📊 Report Generator
+              </Link>
             </li>
-            <li className="sidebar-item" onClick={() => navigate('/assignments')} style={{ cursor: 'pointer' }}>📋 Assignments</li>
-            <li className="sidebar-item" onClick={() => navigate('/gpa')} style={{ cursor: 'pointer' }}>📊 GPA Calculator</li>
-            <li className="sidebar-item" onClick={() => navigate('/lost-found')} style={{ cursor: 'pointer' }}>🔍 Lost & Found</li>
+            <li
+              className="sidebar-item"
+              onClick={() => navigate("/assignments")}
+              style={{ cursor: "pointer" }}
+            >
+              📋 Assignments
+            </li>
+            <li
+              className="sidebar-item"
+              onClick={() => navigate("/gpa")}
+              style={{ cursor: "pointer" }}
+            >
+              📈 GPA Calculator
+            </li>
+            <li
+              className="sidebar-item"
+              onClick={() => navigate("/lost-found")}
+              style={{ cursor: "pointer" }}
+            >
+              🔍 Lost & Found
+            </li>
           </ul>
         </div>
+        {/* 👉 OTHERS SECTION WITH CLUBS */}
+<div>
+  <div className="sidebar-section-title">Others</div>
+  <ul className="sidebar-menu">
+    {isStudent && (
+      <li
+        className="sidebar-item"
+        onClick={() =>
+          navigate(isStudentClubAdmin ? "/club-admin" : "/clubs")
+        }
+        style={{ cursor: "pointer" }}
+      >
+        🎉 Clubs
+      </li>
+    )}
+    {isStudent && (
+      <li
+        className="sidebar-item"
+        onClick={() => navigate("/discussions")}
+        style={{ cursor: "pointer" }}
+      >
+        💬 Discussions
+      </li>
+    )}
+  </ul>
+</div>
 
         <div style={{ marginTop: "auto" }}>
           <div className="sidebar-section-title">Settings</div>
           <ul className="sidebar-menu">
-            <li className="sidebar-item disabled">General Settings</li>
-            <li className="sidebar-item disabled">Get Help</li>
-            <li className="sidebar-item" onClick={() => navigate('/profile-settings')} style={{ cursor: 'pointer' }}>⚙️ Profile Settings</li>
+            <li
+              className="sidebar-item"
+              onClick={() => navigate("/profile-settings")}
+              style={{ cursor: "pointer" }}
+            >
+              ⚙️ Profile Settings
+            </li>
+            <li
+              className="sidebar-item"
+              onClick={handleLogout}
+              style={{ cursor: "pointer", color: "#f97373" }}
+            >
+              🚪 Logout
+            </li>
           </ul>
         </div>
       </aside>
@@ -119,12 +189,9 @@ const DashboardPage = () => {
             </span>
           </div>
 
-          {/* ✅ FIXED: Theme toggle + user chip */}
+          {/* ✅ Theme toggle + user chip */}
           <div className="dashboard-top-actions">
-            <button
-              className="theme-toggle-btn"
-              onClick={toggleTheme}
-            >
+            <button className="theme-toggle-btn" onClick={toggleTheme}>
               {theme === "dark" ? "☀ Light Mode" : "🌙 Dark Mode"}
             </button>
 
@@ -145,8 +212,7 @@ const DashboardPage = () => {
                 Your personalized Campus Buddy dashboard. Important tools and
                 assistants are available below.
               </p>
-          </div>
-
+            </div>
 
             {/* EVENT CALENDAR WIDGET */}
             <div
@@ -174,30 +240,10 @@ const DashboardPage = () => {
               </button>
             </div>
 
-            {isStudentClubAdmin && (
-              <div className="club-admin-info">
-                <p>Club Admin Access</p>
-                <button onClick={() => navigate("/club-admin")}>
-                  View Club Dashboard
-                </button>
-              </div>
-            )}
-
-            {/* ➡ RIGHT */}
-
-
-            {/* Placeholder */}
-            <div className="empty-widgets-box">
-              More widgets coming soon:
-              <br />• Assignments
-              <br />• To-dos
-              <br />• Reports
-            </div>
             {/* 🤖 Chatbot */}
             <div style={{ marginTop: 30 }}>
               <Chatbot />
             </div>
-
           </div>
 
           {/* ➡ RIGHT */}
@@ -223,14 +269,6 @@ const DashboardPage = () => {
             <div style={{ marginTop: 24 }}>
               <Notifications />
             </div>
-
-            <button
-              className="btn-logout"
-              style={{ marginTop: 20 }}
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
           </div>
         </section>
       </main>

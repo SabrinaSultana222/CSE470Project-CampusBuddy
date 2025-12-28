@@ -11,6 +11,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const clubPostRoutes = require("./routes/clubPostRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const discussionRoutes = require("./routes/discussionRoutes");
 
 // Additional routes
 const assignmentsRoutes = require("./routes/assignments");
@@ -55,6 +56,7 @@ app.use("/api/lost-found", lostFoundRoutes);
 app.use("/api/comments", commentsRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/users", usersRoutes);
+app.use("/api", discussionRoutes);
 
 // health check
 app.get("/", (req, res) => {
