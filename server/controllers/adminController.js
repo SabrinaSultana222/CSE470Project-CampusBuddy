@@ -1,6 +1,7 @@
 // server/controllers/adminController.js
 const User = require("../models/user");
 const ClubPost = require("../models/clubpost");
+const clubNotificationService = require("../services/clubNotificationService");
 
 // GET /api/admin/users?role=student|faculty|clubAdmin|admin
 const getUsers = async (req, res) => {
@@ -170,8 +171,40 @@ const updateClubPostStatus = async (req, res) => {
       return res.status(404).json({ message: "Club post not found" });
     }
 
+    const prevStatus = post.status;
     post.status = status;
     await post.save();
+
+    // ✅ REALTIME NOTIFICATION TO CLUB ADMIN on APPROVED/REJECTED only
+    try {
+      // only notify if status actually changes and is approved/rejected
+      if (prevStatus !== status && (status === "approved" || status === "rejected")) {
+        const adminName = req.user?.name || "Admin";
+        const clubAdminId = post.createdBy?._id;
+
+        if (clubAdminId) {
+          const notifType =
+            status === "approved"
+              ? "club_post_approved"
+              : "club_post_rejected";
+
+          const msg = `Your club post "${post.title}" was ${status} by ${adminName}.`;
+          const link = `/club-posts/my`; // or `/club-posts/${post._id}` if you have detail page
+
+          await clubNotificationService.createAndEmitNotifications(
+            notifType,
+            post._id,
+            req.user._id,
+            [clubAdminId],
+            msg,
+            link
+          );
+        }
+      }
+    } catch (notifErr) {
+      console.error("Admin -> Club admin notification error:", notifErr);
+      // don't fail the main request if notification fails
+    }
 
     return res.json({
       message: `Club post marked as ${status}`,

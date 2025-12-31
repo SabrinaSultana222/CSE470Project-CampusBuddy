@@ -1,6 +1,7 @@
 // server/controllers/clubPostController.js
 const ClubPost = require("../models/clubpost");
 const User = require("../models/user");
+const clubNotificationService = require("../services/clubNotificationService");
 
 // POST /api/club-posts  (club admin creates a post)
 const createClubPost = async (req, res) => {
@@ -31,6 +32,32 @@ const createClubPost = async (req, res) => {
       category,
       status: "pending", // admin can approve later
     });
+
+    // ✅ REALTIME NOTIFICATION TO ADMINS (pending approval)
+    try {
+      const senderName = req.user?.name || "A club admin";
+
+      // all admins
+      const admins = await User.find({ role: "admin" }).select("_id");
+      const adminIds = admins.map((a) => a._id);
+
+      const msg = `${senderName} submitted a ${category || "club"} post for approval: "${title}"`;
+      const link = `/admin/club-posts`; // or `/admin/club-posts/${post._id}` if you have that page
+
+      if (adminIds.length > 0) {
+        await clubNotificationService.createAndEmitNotifications(
+          "club_post_submitted",
+          post._id,
+          req.user._id,
+          adminIds,
+          msg,
+          link
+        );
+      }
+    } catch (notifErr) {
+      console.error("Club admin -> Admin notification error:", notifErr);
+      // don't fail the main request if notification fails
+    }
 
     return res.status(201).json(post);
   } catch (err) {

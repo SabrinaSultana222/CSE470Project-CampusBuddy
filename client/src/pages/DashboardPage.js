@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
+import DiscussionNotificationBell from '../components/DiscussionNotificationBell'; // ADD THIS
 import Chatbot from "../components/Chatbot";
 import Notifications from "../components/Notifications";
 import { useTheme } from "../context/ThemeContext";
@@ -248,23 +248,11 @@ const DashboardPage = () => {
 
           {/* ➡ RIGHT */}
           <div className="dashboard-main-right">
-            <h3>Student Details</h3>
-
-            <h3>Student Details</h3>
-
-            <div className="detail-row">
-              <strong>Name:</strong> {user.name}
-            </div>
-            <div className="detail-row">
-              <strong>ID:</strong> {user.bracuId}
-            </div>
-            <div className="detail-row">
-              <strong>Email:</strong> {user.email}
-            </div>
-            <div className="detail-row">
-              <strong>Role:</strong> {user.role}
-            </div>
-
+            <div className="flex items-center space-x-4">
+               <DiscussionNotificationBell />
+               {/* your existing profile avatar if any */}
+               </div>
+          
             {/* 🔔 Notifications */}
             <div style={{ marginTop: 24 }}>
               <Notifications />

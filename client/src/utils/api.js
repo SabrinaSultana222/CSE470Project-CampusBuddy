@@ -41,10 +41,10 @@ export async function authFetch(path, options = {}) {
   const url = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
   const res = await fetch(url, { ...options, headers });
   const contentType = res.headers.get('content-type') || '';
-  
+
   // Check if response has content
   const text = await res.text();
-  
+
   if (contentType.includes('application/json') && text) {
     try {
       const data = JSON.parse(text);
@@ -55,7 +55,25 @@ export async function authFetch(path, options = {}) {
       throw err;
     }
   }
-  
+
   if (!res.ok) throw new Error(text || 'Request failed');
   return null;
 }
+
+// Add these notification API methods (APPEND TO END OF FILE)
+export const discussionNotificationApi = {
+  getMyNotifications: () => authFetch('/api/discussion-notifications/my-notifications'),
+  getUnreadCount: () => authFetch('/api/discussion-notifications/unread-count'),
+  markAsRead: (id) => authFetch(`/api/discussion-notifications/${id}/read`, {
+    method: 'PATCH'
+  }),
+};
+
+// ✅ NEW: Club Notifications API (APPEND ONLY - does not affect discussion)
+export const clubNotificationApi = {
+  getMyNotifications: () => authFetch('/api/club-notifications/my-notifications'),
+  getUnreadCount: () => authFetch('/api/club-notifications/unread-count'),
+  markAsRead: (id) => authFetch(`/api/club-notifications/${id}/read`, {
+    method: 'PATCH'
+  }),
+};

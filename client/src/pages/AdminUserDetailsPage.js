@@ -33,58 +33,75 @@ const AdminUserDetailsPage = () => {
   }, [id]);
 
   return (
-    <div>
-      <button
-        type="button"
-        className="btn-secondary"
-        onClick={() => navigate(-1)}
-      >
-        Back
-      </button>
+    <div className="admin-page">
+      <div className="page-actions">
+        <button
+          type="button"
+          className="btn-back"
+          onClick={() => navigate(-1)}
+        >
+          ← Back
+        </button>
+      </div>
 
       {loading ? (
-        <p>Loading user...</p>
+        <div className="loading-state">
+          <p>Loading user details...</p>
+        </div>
       ) : !user ? (
-        <p>{message || "User not found"}</p>
+        <div className="error-state">
+          <p>{message || "User not found"}</p>
+        </div>
       ) : (
         <div className="admin-user-details-card">
-          <h1>User Details</h1>
+          <div className="user-header">
+            <h1>{user.name}</h1>
+            <span className={`user-role-badge role-${user.role}`}>
+              {user.role}
+            </span>
+          </div>
 
           <div className="details-grid">
-            <div>
-              <h2>Basic Info</h2>
-              <p>
-                <strong>Name:</strong> {user.name}
-              </p>
-              <p>
-                <strong>Email:</strong> {user.email}
-              </p>
-              <p>
-                <strong>Role:</strong> {user.role}
-              </p>
-              <p>
-                <strong>Status:</strong>{" "}
-                {user.isActive ? "Active" : "Inactive"}
-              </p>
-              <p>
-                <strong>BRACU ID:</strong> {user.bracuId}
-              </p>
+            <div className="detail-section">
+              <h2>Basic Information</h2>
+              <div className="detail-item">
+                <span className="detail-label">Name:</span>
+                <span>{user.name}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Email:</span>
+                <span>{user.email}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">BRACU ID:</span>
+                <span>{user.bracuId}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Status:</span>
+                <span className={`status-badge status-${user.isActive ? 'active' : 'inactive'}`}>
+                  {user.isActive ? "Active" : "Inactive"}
+                </span>
+              </div>
             </div>
 
-            <div>
-              <h2>Meta</h2>
-              <p>
-                <strong>Created at:</strong>{" "}
-                {user.createdAt
+            <div className="detail-section">
+              <h2>Account Details</h2>
+              <div className="detail-item">
+                <span className="detail-label">Club Admin:</span>
+                <span>{user.isClubAdmin ? "Yes" : "No"}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Created:</span>
+                <span>{user.createdAt
                   ? new Date(user.createdAt).toLocaleString()
-                  : "N/A"}
-              </p>
-              <p>
-                <strong>Updated at:</strong>{" "}
-                {user.updatedAt
+                  : "N/A"}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Updated:</span>
+                <span>{user.updatedAt
                   ? new Date(user.updatedAt).toLocaleString()
-                  : "N/A"}
-              </p>
+                  : "N/A"}</span>
+              </div>
             </div>
           </div>
         </div>
