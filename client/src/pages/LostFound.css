@@ -676,3 +676,125 @@
     align-items: flex-start;
   }
 }
+
+/* Pagination Controls */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+  padding: 1rem;
+}
+
+.pagination-btn {
+  padding: 0.625rem 1.25rem;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+}
+
+.pagination-btn:disabled {
+  background: linear-gradient(135deg, #9ca3af, #d1d5db);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pagination-info {
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.dark .pagination-info {
+  color: #94a3b8;
+}
+
+/* Reply Functionality */
+.reply-btn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  margin-top: 0.5rem;
+  transition: color 0.2s;
+}
+
+.reply-btn:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.dark .reply-btn {
+  color: #60a5fa;
+}
+
+.dark .reply-btn:hover {
+  color: #93c5fd;
+}
+
+.reply-input-container {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.dark .reply-input-container {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.replies-list {
+  margin-top: 1rem;
+  padding-left: 2rem;
+  border-left: 2px solid #e5e7eb;
+}
+
+.dark .replies-list {
+  border-left-color: #334155;
+}
+
+.reply-item {
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+.dark .reply-item {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.reply-item .comment-header {
+  margin-bottom: 0.5rem;
+}
+
+.reply-item .comment-text {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin: 0;
+}
+
+.dark .reply-item .comment-text {
+  color: #9ca3af;
+}
+
+

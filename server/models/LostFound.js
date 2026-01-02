@@ -22,5 +22,7 @@ const lostFoundSchema = new mongoose.Schema({
 lostFoundSchema.index({ type: 1, status: 1, createdAt: -1 });
 lostFoundSchema.index({ userId: 1 });
 lostFoundSchema.index({ category: 1 });
+lostFoundSchema.index({ date: -1 });
+lostFoundSchema.index({ title: 'text', description: 'text', location: 'text' });
 
 module.exports = mongoose.model('LostFound', lostFoundSchema);

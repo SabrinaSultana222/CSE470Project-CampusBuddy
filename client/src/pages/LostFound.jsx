@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './LostFound.css';
 import { getToken, authFetch } from '../utils/api';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import SelectField from '../components/SelectField';
 import { useToast } from '../context/ToastContext';
+import SearchBar from '../components/SearchBar';
 
 const LostFound = () => {
   const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -20,8 +20,24 @@ const LostFound = () => {
   const [loadingComments, setLoadingComments] = useState(false);
   const [editingComment, setEditingComment] = useState(null);
   const [editingCommentText, setEditingCommentText] = useState('');
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyText, setReplyText] = useState('');
   
-  // Filters
+  // Search and filter state
+  const [searchParams, setSearchParams] = useState({
+    searchTerm: '',
+    filters: { status: 'open' },
+    sortBy: ''
+  });
+  
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 50,
+    total: 0,
+    pages: 1
+  });
+  
+  // Filters (keeping for backward compatibility)
   const [filters, setFilters] = useState({
     type: '',
     category: '',
@@ -66,50 +82,51 @@ const LostFound = () => {
   
   useEffect(() => {
     loadPosts();
-  }, []);
+  }, [searchParams, pagination.page]);
   
-  useEffect(() => {
-    applyFilters();
-  }, [filters, posts]);
+  const handleSearch = useCallback(({ searchTerm, filters, sortBy }) => {
+    setSearchParams({ searchTerm, filters, sortBy });
+    setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1
+  }, []);
   
   const loadPosts = async () => {
     try {
       setLoading(true);
-      const query = new URLSearchParams();
-      if (filters.status) query.append('status', filters.status);
       
-      const response = await fetch(`/api/lost-found?${query}`);
+      // Build query parameters
+      const params = new URLSearchParams();
+      if (searchParams.searchTerm) params.append('search', searchParams.searchTerm);
+      if (searchParams.sortBy) params.append('sortBy', searchParams.sortBy);
+      if (searchParams.filters.status) params.append('status', searchParams.filters.status);
+      if (searchParams.filters.type) params.append('type', searchParams.filters.type);
+      if (searchParams.filters.category) params.append('category', searchParams.filters.category);
+      if (searchParams.filters.dateFrom) params.append('dateFrom', searchParams.filters.dateFrom);
+      if (searchParams.filters.dateTo) params.append('dateTo', searchParams.filters.dateTo);
+      params.append('page', pagination.page);
+      params.append('limit', pagination.limit);
+      
+      const queryString = params.toString();
+      const url = `/api/lost-found${queryString ? `?${queryString}` : ''}`;
+      
+      const response = await fetch(url);
       const text = await response.text();
-      const data = text ? JSON.parse(text) : [];
-      setPosts(data || []);
+      const result = text ? JSON.parse(text) : [];
+      
+      // Handle both old format (array) and new format (object with data/pagination)
+      if (Array.isArray(result)) {
+        setPosts(result);
+      } else {
+        setPosts(result.data || []);
+        if (result.pagination) {
+          setPagination(result.pagination);
+        }
+      }
     } catch (err) {
       console.error('Failed to load posts', err);
       showToast('Failed to load posts', 'error');
     } finally {
       setLoading(false);
     }
-  };
-  
-  const applyFilters = () => {
-    let filtered = [...posts];
-    
-    if (filters.type) {
-      filtered = filtered.filter(p => p.type === filters.type);
-    }
-    
-    if (filters.category) {
-      filtered = filtered.filter(p => p.category === filters.category);
-    }
-    
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(p => 
-        p.title.toLowerCase().includes(searchLower) ||
-        p.description.toLowerCase().includes(searchLower)
-      );
-    }
-    
-    setFilteredPosts(filtered);
   };
   
   const handleFilterChange = (e) => {
@@ -337,6 +354,38 @@ const LostFound = () => {
     }
   };
   
+  const handleAddReply = async (parentCommentId) => {
+    if (!replyText.trim()) {
+      showToast('Reply cannot be empty', 'warning');
+      return;
+    }
+    
+    if (!token) {
+      showToast('Please login to reply', 'info');
+      return;
+    }
+    
+    try {
+      const response = await authFetch(`/api/comments/${selectedPost._id}`, {
+        method: 'POST',
+        body: { text: replyText, parentId: parentCommentId }
+      });
+      
+      // Add reply to the parent comment's replies array
+      setComments(comments.map(c => 
+        c._id === parentCommentId 
+          ? { ...c, replies: [...(c.replies || []), response] }
+          : c
+      ));
+      
+      setReplyText('');
+      setReplyingTo(null);
+      showToast('Reply added successfully', 'success');
+    } catch (err) {
+      showToast(err.error || 'Failed to add reply', 'error');
+    }
+  };
+  
   const handleUpdateComment = async () => {
     if (!editingCommentText.trim()) {
       showToast('Comment cannot be empty', 'warning');
@@ -357,12 +406,24 @@ const LostFound = () => {
     }
   };
   
-  const handleDeleteComment = async (commentId) => {
+  const handleDeleteComment = async (commentId, parentId = null) => {
     if (!window.confirm('Delete this comment?')) return;
     
     try {
       await authFetch(`/api/comments/${commentId}`, { method: 'DELETE' });
-      setComments(comments.filter(c => c._id !== commentId));
+      
+      if (parentId) {
+        // Delete reply from parent comment's replies array
+        setComments(comments.map(c => 
+          c._id === parentId
+            ? { ...c, replies: c.replies.filter(r => r._id !== commentId) }
+            : c
+        ));
+      } else {
+        // Delete top-level comment
+        setComments(comments.filter(c => c._id !== commentId));
+      }
+      
       showToast('Comment deleted', 'success');
     } catch (err) {
       showToast(err.error || 'Failed to delete comment', 'error');
@@ -390,6 +451,44 @@ const LostFound = () => {
     return icons[category] || '📦';
   };
 
+  // SearchBar filter configuration
+  const searchFilters = [
+    {
+      name: 'type',
+      label: 'Type',
+      type: 'select',
+      options: [
+        { value: '', label: 'All Types' },
+        { value: 'lost', label: '❌ Lost' },
+        { value: 'found', label: '✅ Found' },
+      ]
+    },
+    {
+      name: 'category',
+      label: 'Category',
+      type: 'select',
+      options: [
+        { value: '', label: 'All Categories' },
+        ...categoryOptions
+      ]
+    },
+    {
+      name: 'status',
+      label: 'Status',
+      type: 'select',
+      options: [
+        { value: '', label: 'All Status' },
+        { value: 'open', label: '🔓 Open' },
+        { value: 'resolved', label: '✅ Resolved' },
+      ]
+    },
+    {
+      name: 'date',
+      label: 'Date',
+      type: 'dateRange'
+    }
+  ];
+
   return (
     <div className="lostfound-page">
       <div className="lostfound-container">
@@ -398,8 +497,25 @@ const LostFound = () => {
           <p>Help your fellow students find their lost items</p>
         </div>
         
-        {/* Filters & Search */}
-        <div className="lostfound-filters">
+        {/* Modern SearchBar */}
+        <SearchBar
+          onSearch={handleSearch}
+          placeholder="Search by item name, description, or location..."
+          filters={searchFilters}
+          showSort={true}
+        />
+        
+        {/* Create Post Button */}
+        {token && (
+          <div style={{ textAlign: 'right', marginBottom: '1.5rem' }}>
+            <Button onClick={() => setShowCreateModal(true)} variant="primary">
+              ➕ Create Post
+            </Button>
+          </div>
+        )}
+        
+        {/* Old Filters (keeping for backward compatibility) - can be removed later */}
+        <div className="lostfound-filters" style={{ display: 'none' }}>
           <Input
             type="text"
             name="search"
@@ -450,15 +566,15 @@ const LostFound = () => {
         {/* Posts Grid */}
         {loading ? (
           <div className="lostfound-loading">Loading posts...</div>
-        ) : filteredPosts.length === 0 ? (
+        ) : posts.length === 0 ? (
           <div className="lostfound-empty">
             <div className="empty-icon">📭</div>
             <h3>No items found</h3>
-            <p>Be the first to post a lost or found item</p>
+            <p>{searchParams.searchTerm || Object.keys(searchParams.filters).length > 1 ? 'No items match your search criteria' : 'Be the first to post a lost or found item'}</p>
           </div>
         ) : (
           <div className="lostfound-grid">
-            {filteredPosts.map(post => (
+            {posts.map(post => (
               <div 
                 key={post._id} 
                 className={`lostfound-card ${post.status === 'resolved' ? 'resolved' : ''}`}
@@ -499,6 +615,29 @@ const LostFound = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+        
+        {/* Pagination Controls */}
+        {pagination.pages > 1 && (
+          <div className="pagination-controls">
+            <button
+              className="pagination-btn"
+              onClick={() => setPagination(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
+              disabled={pagination.page === 1}
+            >
+              ← Previous
+            </button>
+            <span className="pagination-info">
+              Page {pagination.page} of {pagination.pages} ({pagination.total} total)
+            </span>
+            <button
+              className="pagination-btn"
+              onClick={() => setPagination(prev => ({ ...prev, page: Math.min(prev.pages, prev.page + 1) }))}
+              disabled={pagination.page === pagination.pages}
+            >
+              Next →
+            </button>
           </div>
         )}
         
@@ -949,7 +1088,97 @@ const LostFound = () => {
                               </div>
                             </div>
                           ) : (
-                            <p className="comment-text">{comment.text}</p>
+                            <>
+                              <p className="comment-text">{comment.text}</p>
+                              
+                              {/* Reply Button */}
+                              {token && (
+                                <button 
+                                  className="reply-btn"
+                                  onClick={() => setReplyingTo(replyingTo === comment._id ? null : comment._id)}
+                                >
+                                  💬 Reply
+                                </button>
+                              )}
+                              
+                              {/* Reply Input */}
+                              {replyingTo === comment._id && (
+                                <div className="reply-input-container">
+                                  <textarea
+                                    value={replyText}
+                                    onChange={(e) => setReplyText(e.target.value)}
+                                    maxLength="500"
+                                    placeholder="Write a reply..."
+                                    className="comment-textarea"
+                                  />
+                                  <div className="comment-actions">
+                                    <span className="char-count">{replyText.length}/500</span>
+                                    <Button 
+                                      onClick={() => handleAddReply(comment._id)}
+                                      variant="primary"
+                                      size="sm"
+                                    >
+                                      Reply
+                                    </Button>
+                                    <Button 
+                                      onClick={() => {
+                                        setReplyingTo(null);
+                                        setReplyText('');
+                                      }}
+                                      variant="secondary"
+                                      size="sm"
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Nested Replies */}
+                              {comment.replies && comment.replies.length > 0 && (
+                                <div className="replies-list">
+                                  {comment.replies.map(reply => (
+                                    <div key={reply._id} className="reply-item">
+                                      <div className="comment-header">
+                                        <div className="comment-user">
+                                          {reply.userId?.avatarUrl && (
+                                            <img src={reply.userId.avatarUrl} alt={reply.userId.name} className="comment-avatar" />
+                                          )}
+                                          <div className="comment-user-info">
+                                            <strong>{reply.userId?.name}</strong>
+                                            {reply.userId?.studentId && (
+                                              <span className="comment-id">(ID: {reply.userId.studentId})</span>
+                                            )}
+                                            <small className="comment-time">
+                                              {new Date(reply.createdAt).toLocaleDateString('en-US', {
+                                                month: 'short',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                              })}
+                                            </small>
+                                          </div>
+                                        </div>
+                                        
+                                        {/* Reply Actions */}
+                                        {token && reply.userId?._id === JSON.parse(localStorage.getItem('campusbuddy.user') || '{}')._id && (
+                                          <div className="comment-actions-icons">
+                                            <button 
+                                              className="comment-btn delete-btn"
+                                              onClick={() => handleDeleteComment(reply._id, comment._id)}
+                                              title="Delete"
+                                            >
+                                              🗑️
+                                            </button>
+                                          </div>
+                                        )}
+                                      </div>
+                                      <p className="comment-text">{reply.text}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </>
                           )}
                         </div>
                       ))}

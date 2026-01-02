@@ -1,14 +1,26 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import "./Assignments.css";
-import { getToken, getUser, authFetch } from '../utils/api';
+import { getToken, getUser, authFetch, API_BASE_URL } from '../utils/api';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { useToast } from '../context/ToastContext';
+import SearchBar from '../components/SearchBar';
 
 const STORAGE_KEY = 'campusbuddy.assignments.v1';
 
 const Assignments = () => {
   const [assignments, setAssignments] = useState([]);
+  const [searchParams, setSearchParams] = useState({
+    searchTerm: '',
+    filters: {},
+    sortBy: ''
+  });
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 50,
+    total: 0,
+    pages: 1
+  });
   const [newAssignment, setNewAssignment] = useState({
     title: "",
     dueDate: "",
@@ -22,11 +34,53 @@ const Assignments = () => {
   const [previews, setPreviews] = useState({});
   const [didLoad, setDidLoad] = useState(false);
   const createdUrlsRef = useRef(new Set());
+  const fileInputRefs = useRef({});
 
   const user = getUser();
   const token = getToken();
   const { showToast } = useToast();
   const toast = { showToast };
+
+  const handleSearch = useCallback(({ searchTerm, filters, sortBy }) => {
+    console.log('🔍 Search triggered:', { searchTerm, filters, sortBy });
+    setSearchParams({ searchTerm, filters, sortBy });
+    setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1 on new search
+  }, []);
+
+  // Helper function to reload assignments with current search/filter params
+  const reloadAssignments = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (searchParams.searchTerm) params.append('search', searchParams.searchTerm);
+      if (searchParams.sortBy) params.append('sortBy', searchParams.sortBy);
+      if (searchParams.filters.status) params.append('status', searchParams.filters.status);
+      if (searchParams.filters.course) params.append('course', searchParams.filters.course);
+      if (searchParams.filters.dueDateFrom) params.append('dueDateFrom', searchParams.filters.dueDateFrom);
+      if (searchParams.filters.dueDateTo) params.append('dueDateTo', searchParams.filters.dueDateTo);
+      params.append('page', pagination.page);
+      params.append('limit', pagination.limit);
+      
+      const queryString = params.toString();
+      const url = `/api/assignments${queryString ? `?${queryString}` : ''}`;
+      
+      const fresh = await authFetch(url);
+      
+      // Handle both old format (array) and new format (object with data/pagination)
+      if (Array.isArray(fresh)) {
+        setAssignments(fresh);
+      } else {
+        setAssignments(fresh.data || []);
+        if (fresh.pagination) {
+          setPagination(fresh.pagination);
+        }
+      }
+      
+      return fresh;
+    } catch (err) {
+      console.error('Failed to reload assignments:', err);
+      throw err;
+    }
+  };
 
   // Load persisted assignments from backend (if authenticated) or localStorage
   useEffect(() => {
@@ -35,9 +89,48 @@ const Assignments = () => {
       try {
         if (token && user) {
           setLoading(true);
-          const res = await authFetch(`/api/assignments`);
+          
+          // Build query parameters
+          const params = new URLSearchParams();
+          if (searchParams.searchTerm) params.append('search', searchParams.searchTerm);
+          if (searchParams.sortBy) params.append('sortBy', searchParams.sortBy);
+          if (searchParams.filters.status) params.append('status', searchParams.filters.status);
+          if (searchParams.filters.course) params.append('course', searchParams.filters.course);
+          if (searchParams.filters.dueDateFrom) params.append('dueDateFrom', searchParams.filters.dueDateFrom);
+          if (searchParams.filters.dueDateTo) params.append('dueDateTo', searchParams.filters.dueDateTo);
+          params.append('page', pagination.page);
+          params.append('limit', pagination.limit);
+          
+          const queryString = params.toString();
+          const url = `/api/assignments${queryString ? `?${queryString}` : ''}`;
+          
+          console.log('🌐 Fetching assignments with URL:', url);
+          console.log('📊 Search params:', searchParams);
+          
+          const res = await authFetch(url);
           if (!mounted) return;
-          setAssignments(res || []);
+          
+          console.log('📦 Received response:', res);
+          console.log('📋 Assignments data:', Array.isArray(res) ? res : res.data);
+          
+          // Handle both old format (array) and new format (object with data/pagination)
+          if (Array.isArray(res)) {
+            console.log('✅ Setting assignments (array format):', res.length, 'items');
+            res.forEach((a, i) => {
+              console.log(`  Assignment ${i + 1}:`, a.title, '- Attachments:', a.attachments?.length || 0);
+            });
+            setAssignments(res);
+          } else {
+            console.log('✅ Setting assignments (paginated format):', res.data?.length || 0, 'items');
+            res.data?.forEach((a, i) => {
+              console.log(`  Assignment ${i + 1}:`, a.title, '- Attachments:', a.attachments?.length || 0);
+            });
+            setAssignments(res.data || []);
+            if (res.pagination) {
+              setPagination(res.pagination);
+            }
+          }
+          
           if (mounted) setDidLoad(true);
         } else {
           // Load from localStorage only if not already loaded from server
@@ -59,7 +152,7 @@ const Assignments = () => {
     }
     load();
     return () => { mounted = false; };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchParams, pagination.page]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Persist when assignments change (only in localStorage for unauthenticated users)
   useEffect(() => {
@@ -91,8 +184,7 @@ const Assignments = () => {
         const body = { ...newAssignment };
         const result = await authFetch('/api/assignments/add', { method: 'POST', body });
         console.log('✅ Server response:', result);
-        const fresh = await authFetch(`/api/assignments`);
-        setAssignments(fresh || []);
+        await reloadAssignments();
         setNewAssignment({ title: "", dueDate: "", course: "" });
         setErrors({});
         toast.showToast('Assignment added', 'success');
@@ -120,8 +212,7 @@ const Assignments = () => {
         const item = assignments[index];
         if (!item || !item._id) return;
         await authFetch(`/api/assignments/delete/${item._id}`, { method: 'DELETE' });
-          const fresh = await authFetch(`/api/assignments`);
-        setAssignments(fresh || []);
+        await reloadAssignments();
       } catch (err) {
         console.warn('Failed to delete assignment', err);
       }
@@ -132,7 +223,15 @@ const Assignments = () => {
 
   const handleFileChange = (id, e) => {
     const file = e.target.files[0];
+    if (!file) {
+      setSelectedFiles((s) => ({ ...s, [id]: null }));
+      setPreviews((p) => ({ ...p, [id]: null }));
+      return;
+    }
+    
     setSelectedFiles((s) => ({ ...s, [id]: file }));
+    console.log('📎 File selected:', file.name, 'Size:', (file.size / 1024).toFixed(2), 'KB');
+    
     // cleanup previous image url if any
     setPreviews((p) => {
       const prev = p[id];
@@ -207,9 +306,14 @@ const Assignments = () => {
         xhr.onerror = () => reject(new Error('Upload failed'));
         xhr.send(fd);
       });
-      const fresh = await authFetch(`/api/assignments`);
-      setAssignments(fresh || []);
+      await reloadAssignments();
       setSelectedFiles((s) => ({ ...s, [id]: null }));
+      
+      // Clear the file input element
+      if (fileInputRefs.current[id]) {
+        fileInputRefs.current[id].value = '';
+      }
+      
       // revoke any objectURL used for preview
       setPreviews((p) => {
         const prev = p[id];
@@ -226,12 +330,41 @@ const Assignments = () => {
     } finally { setUploading((u) => ({ ...u, [id]: false })); setUploadProgress((u) => ({ ...u, [id]: 0 })); }
   };
 
+  // Filter configuration for SearchBar
+  const searchFilters = [
+    {
+      name: 'status',
+      label: 'Status',
+      type: 'select',
+      options: [
+        { value: '', label: 'All Status' },
+        { value: 'pending', label: 'Pending' },
+        { value: 'submitted', label: 'Submitted' },
+        { value: 'graded', label: 'Graded' }
+      ]
+    },
+    {
+      name: 'dueDateRange',
+      label: 'Due Date',
+      type: 'dateRange'
+    }
+  ];
+
   return (
     <div className="assignments-page">
       <div className="assignments-header">
         <h1>Assignments</h1>
-        <p className="auth-sub">Add and manage your assignments — resubmit files for graded work.</p>
+        <p className="auth-sub">Add and manage your assignments.</p>
       </div>
+
+      {token && user && (
+        <SearchBar
+          onSearch={handleSearch}
+          placeholder="Search assignments by title, course, or description..."
+          filters={searchFilters}
+          showSort={true}
+        />
+      )}
 
       <div className="assignments-form-card">
         <div className="assignments-form-title">Add Assignment</div>
@@ -278,7 +411,11 @@ const Assignments = () => {
         ) : assignments.length === 0 ? (
           <div className="assignments-empty">
             <div className="assignments-empty-icon">📚</div>
-            <p>No assignments yet. Add one to get started!</p>
+            <p>
+              {searchParams.searchTerm || Object.keys(searchParams.filters).some(key => searchParams.filters[key]) 
+                ? 'No assignments match your search criteria. Try adjusting your filters.' 
+                : 'No assignments yet. Add one to get started!'}
+            </p>
           </div>
         ) : (
           <ul className="assignments-list">
@@ -303,7 +440,12 @@ const Assignments = () => {
                       </div>
                       {a.attachments.map((att, i) => (
                         <div key={i} className="attachment-item">
-                          <a href={att.url} target="_blank" rel="noreferrer" title="Download">
+                          <a 
+                            href={att.url.startsWith('http') ? att.url : `${API_BASE_URL}${att.url}`} 
+                            target="_blank" 
+                            rel="noreferrer" 
+                            title="Download"
+                          >
                             {att.originalName || att.filename}
                           </a>
                           <span className="attachment-meta">{new Date(att.uploadedAt).toLocaleString()}</span>
@@ -312,24 +454,35 @@ const Assignments = () => {
                     </div>
                   )}
 
-                  {/* File input + resubmit button */}
+                  {/* File input + submit button */}
                   <div className="attachment-upload">
-                    <input 
-                      type="file" 
-                      accept=".pdf,.doc,.docx,.ipynb,.py,.txt,.md,.png,.jpg,.jpeg" 
-                      onChange={(e) => handleFileChange(a._id, e)}
-                      title="Select file to upload"
-                    />
-                    <Button 
-                      onClick={() => handleResubmit(a._id)} 
-                      disabled={uploading[a._id]}
-                      style={{ 
-                        backgroundColor: uploading[a._id] ? '#9ca3af' : '#10b981',
-                        cursor: uploading[a._id] ? 'not-allowed' : 'pointer'
-                      }}
-                    >
-                      {uploading[a._id] ? `⏳ ${uploadProgress[a._id] || 0}%` : '📤 Resubmit'}
-                    </Button>
+                    <div className="file-input-wrapper">
+                      <input 
+                        ref={(el) => fileInputRefs.current[a._id] = el}
+                        type="file" 
+                        accept=".pdf,.doc,.docx,.ipynb,.py,.txt,.md,.png,.jpg,.jpeg" 
+                        onChange={(e) => handleFileChange(a._id, e)}
+                        title="Select file to upload"
+                        id={`file-input-${a._id}`}
+                      />
+                      <label htmlFor={`file-input-${a._id}`} className="file-input-label">
+                        📎 {selectedFiles[a._id] ? selectedFiles[a._id].name : 'Choose file...'}
+                      </label>
+                    </div>
+                    
+                    {selectedFiles[a._id] && (
+                      <Button 
+                        onClick={() => handleResubmit(a._id)} 
+                        disabled={uploading[a._id]}
+                        style={{ 
+                          backgroundColor: uploading[a._id] ? '#9ca3af' : '#10b981',
+                          cursor: uploading[a._id] ? 'not-allowed' : 'pointer',
+                          minWidth: '120px'
+                        }}
+                      >
+                        {uploading[a._id] ? `⏳ ${uploadProgress[a._id] || 0}%` : '✅ Submit'}
+                      </Button>
+                    )}
 
                     {/* Preview area (image, text snippet or filename) */}
                     {previews[a._id] && (
@@ -360,6 +513,29 @@ const Assignments = () => {
               </li>
             ))}
           </ul>
+        )}
+        
+        {/* Pagination Controls */}
+        {token && user && pagination.pages > 1 && (
+          <div className="pagination-controls">
+            <button
+              className="pagination-btn"
+              onClick={() => setPagination(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
+              disabled={pagination.page === 1}
+            >
+              ← Previous
+            </button>
+            <span className="pagination-info">
+              Page {pagination.page} of {pagination.pages} ({pagination.total} total)
+            </span>
+            <button
+              className="pagination-btn"
+              onClick={() => setPagination(prev => ({ ...prev, page: Math.min(prev.pages, prev.page + 1) }))}
+              disabled={pagination.page === pagination.pages}
+            >
+              Next →
+            </button>
+          </div>
         )}
       </div>
     </div>
