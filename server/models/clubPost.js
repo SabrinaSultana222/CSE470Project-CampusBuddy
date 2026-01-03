@@ -61,6 +61,13 @@ const clubPostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Add indexes for better search performance
+clubPostSchema.index({ title: 'text', description: 'text', clubName: 'text', location: 'text' });
+clubPostSchema.index({ status: 1, createdAt: -1 });
+clubPostSchema.index({ category: 1, status: 1 });
+clubPostSchema.index({ clubName: 1, status: 1 });
+clubPostSchema.index({ eventDate: -1 });
+
 const ClubPost = mongoose.model("ClubPost", clubPostSchema);
 
 module.exports = ClubPost;

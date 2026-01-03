@@ -5,11 +5,25 @@ const LostFound = require('../models/LostFound');
 exports.getComments = async (req, res) => {
   try {
     const { postId } = req.params;
-    const comments = await Comment.find({ postId })
+    // Only get top-level comments (parentId: null)
+    const comments = await Comment.find({ postId, parentId: null })
       .populate('userId', 'name email studentId avatarUrl')
       .sort({ createdAt: -1 });
     
-    res.json(comments);
+    // For each comment, get its replies
+    const commentsWithReplies = await Promise.all(
+      comments.map(async (comment) => {
+        const replies = await Comment.find({ parentId: comment._id })
+          .populate('userId', 'name email studentId avatarUrl')
+          .sort({ createdAt: 1 });
+        return {
+          ...comment.toObject(),
+          replies: replies || []
+        };
+      })
+    );
+    
+    res.json(commentsWithReplies);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -19,7 +33,7 @@ exports.getComments = async (req, res) => {
 exports.createComment = async (req, res) => {
   try {
     const { postId } = req.params;
-    const { text } = req.body;
+    const { text, parentId } = req.body;
     
     // Validation
     if (!text || !text.trim()) {
@@ -36,10 +50,19 @@ exports.createComment = async (req, res) => {
       return res.status(404).json({ error: 'Post not found' });
     }
     
+    // If parentId is provided, check if parent comment exists
+    if (parentId) {
+      const parentComment = await Comment.findById(parentId);
+      if (!parentComment) {
+        return res.status(404).json({ error: 'Parent comment not found' });
+      }
+    }
+    
     const comment = new Comment({
       postId,
       userId: req.user._id,
       text: text.trim(),
+      parentId: parentId || null,
     });
     
     await comment.save();

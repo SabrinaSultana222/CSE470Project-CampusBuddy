@@ -86,14 +86,97 @@ const getMyClubPosts = async (req, res) => {
   }
 };
 
-// GET /api/club-posts  (students see approved posts)
+// GET /api/club-posts  (students see approved posts with search/filter)
 const getApprovedClubPosts = async (req, res) => {
   try {
-    const posts = await ClubPost.find({ status: "approved" })
-      .sort({ createdAt: -1 })
+    console.log('🔍 Club Posts - Query params:', req.query);
+    
+    const { search, category, clubName, sortBy } = req.query;
+    const filter = { status: "approved" };
+    
+    // Text search on title, description, clubName
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { clubName: { $regex: search, $options: 'i' } }
+      ];
+    }
+    
+    // Filter by category
+    if (category && category !== 'all') {
+      filter.category = category;
+    }
+    
+    // Filter by club name
+    if (clubName) {
+      filter.clubName = { $regex: clubName, $options: 'i' };
+    }
+    
+    // Date range filter for event date
+    if (req.query.eventDateFrom || req.query.eventDateTo) {
+      filter.eventDate = {};
+      if (req.query.eventDateFrom) {
+        filter.eventDate.$gte = new Date(req.query.eventDateFrom);
+      }
+      if (req.query.eventDateTo) {
+        filter.eventDate.$lte = new Date(req.query.eventDateTo);
+      }
+    }
+    
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 50;
+    const skip = (page - 1) * limit;
+    
+    // Sorting
+    let sort = { createdAt: -1 }; // default: newest first
+    if (sortBy) {
+      switch (sortBy) {
+        case 'date_desc':
+          sort = { eventDate: -1 };
+          break;
+        case 'date_asc':
+          sort = { eventDate: 1 };
+          break;
+        case 'title_asc':
+          sort = { title: 1 };
+          break;
+        case 'title_desc':
+          sort = { title: -1 };
+          break;
+        case 'created_desc':
+          sort = { createdAt: -1 };
+          break;
+        case 'created_asc':
+          sort = { createdAt: 1 };
+          break;
+      }
+    }
+    
+    console.log('🔎 Built filter:', JSON.stringify(filter));
+    console.log('📊 Sort:', sort, 'Page:', page, 'Limit:', limit);
+    
+    const posts = await ClubPost.find(filter)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
       .lean();
-
-    return res.json(posts);
+    
+    // Get total count
+    const total = await ClubPost.countDocuments(filter);
+    
+    console.log('✅ Found', posts.length, 'club posts (', total, 'total)');
+    
+    return res.json({
+      data: posts,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
   } catch (err) {
     console.error("getApprovedClubPosts error:", err.message, err.stack);
     return res.status(500).json({ message: "Server error" });
