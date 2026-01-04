@@ -23,7 +23,9 @@ const ClubsPage = () => {
         if (!res.ok) {
           setError(data.message || "Failed to load club posts");
         } else {
-          setPosts(data);
+          // Handle both response formats: direct array or paginated object
+          const postsArray = data.data ? data.data : (Array.isArray(data) ? data : []);
+          setPosts(postsArray);
         }
       } catch {
         setError("Network error while loading club posts");
@@ -34,7 +36,7 @@ const ClubsPage = () => {
     fetchPosts();
   }, []);
 
-  const filteredPosts = posts.filter((p) => {
+  const filteredPosts = Array.isArray(posts) ? posts.filter((p) => {
     const matchesSearch =
       p.title.toLowerCase().includes(search.toLowerCase()) ||
       (p.clubName || "").toLowerCase().includes(search.toLowerCase());
@@ -42,7 +44,7 @@ const ClubsPage = () => {
       category === "all" ||
       (p.category || "event").toLowerCase() === category.toLowerCase();
     return matchesSearch && matchesCategory;
-  });
+  }) : [];
 
   return (
     <div className="clubs-page-root" style={{
