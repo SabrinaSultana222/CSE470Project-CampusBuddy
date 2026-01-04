@@ -47,19 +47,15 @@ const FacultyDashboardPage = () => {
             </span>
           </div>
 
-          <div
-            style={{
-              padding: "16px 18px",
-              borderRadius: "12px",
-              border: "1px solid #e5e7eb",
-              background: "rgba(15,23,42,0.02)",
-            }}
-          >
-            <h2 style={{ margin: "0 0 12px", fontSize: 16 }}>Status</h2>
-            <p style={{ margin: 0, fontSize: 14 }}>
-              You are logged in as <strong>faculty</strong>. You can post
-              announcements and notifications for students below.
-            </p>
+          {/* TOP-RIGHT LOGOUT (no overlap) */}
+          <div className="dashboard-top-right">
+            <button
+              className="btn-logout"
+              onClick={handleLogout}
+              style={{ whiteSpace: "nowrap" }}
+            >
+              Logout
+            </button>
           </div>
         </div>
 
@@ -70,53 +66,10 @@ const FacultyDashboardPage = () => {
             borderRadius: "12px",
             border: "1px solid #e5e7eb",
             background: "rgba(15,23,42,0.02)",
+            marginTop: "16px",
           }}
         >
           <Notifications isFaculty={true} />
-        </section>
-
-        {/* Faculty Details Section */}
-        <section className="dashboard-content-card">
-          {/* LEFT */}
-          <div className="dashboard-main-left">
-            <div className="welcome-banner">
-              <h2>Hello, {user?.name || "Faculty"} 👋</h2>
-              <p>
-                Manage your classes, events, reports, and student information
-                from here.
-              </p>
-            </div>
-
-            <div className="empty-widgets-box">
-              • View and manage class schedules
-              <br />
-              • Track events
-              <br />
-              • Generate reports
-              <br />
-              • Manage to-dos and FAQs
-            </div>
-          </div>
-
-          {/* RIGHT */}
-          <div className="dashboard-main-right">
-            <h3>Your details</h3>
-            <div className="detail-row">
-              <span className="detail-label">Name: </span>
-              {user?.name}
-            </div>
-            <div className="detail-row">
-              <span className="detail-label">Email: </span>
-              {user?.email}
-            </div>
-            <div className="detail-row">
-              <span className="detail-label">Role: </span>Faculty
-            </div>
-
-            <button className="btn-logout" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
         </section>
       </main>
     </div>
