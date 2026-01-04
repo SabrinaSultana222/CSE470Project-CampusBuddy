@@ -252,6 +252,263 @@ const AdminDashboardPage = () => {
             Admin panel ready. Use the toggle, notifications, and logout controls above.
           </p>
         </div>
+
+        {/* Export Data Section */}
+        <div
+          style={{
+            backdropFilter: "blur(20px)",
+            background:
+              theme === "dark"
+                ? "rgba(30,41,59,0.6)"
+                : "rgba(255,255,255,0.8)",
+            borderRadius: "24px",
+            padding: "3rem 2.5rem",
+            border:
+              theme === "dark"
+                ? "1px solid rgba(148,163,184,0.3)"
+                : "1px solid rgba(0,0,0,0.05)",
+            marginTop: "2rem",
+            boxShadow:
+              theme === "dark"
+                ? "0 25px 50px -12px rgba(0,0,0,0.5)"
+                : "0 25px 50px -12px rgba(0,0,0,0.1)",
+          }}
+        >
+          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+            <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📥</div>
+            <h2
+              style={{
+                fontSize: "1.5rem",
+                color: theme === "dark" ? "#f8fafc" : "#1e293b",
+                margin: "0 0 0.5rem 0",
+                fontWeight: "800",
+              }}
+            >
+              Export System Data
+            </h2>
+            <p
+              style={{
+                fontSize: "1rem",
+                color: theme === "dark" ? "#94a3b8" : "#64748b",
+                lineHeight: 1.6,
+              }}
+            >
+              Download system data as CSV files for reporting and analysis
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              gap: "1rem",
+              maxWidth: "900px",
+              margin: "0 auto",
+            }}
+          >
+            {/* Export Users */}
+            <button
+              onClick={() => {
+                window.location.href = "http://localhost:5001/api/admin/export/users";
+                showToast("Downloading users data...");
+              }}
+              style={{
+                padding: "1.25rem 1.5rem",
+                background:
+                  theme === "dark"
+                    ? "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)"
+                    : "linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)",
+                color: "#fff",
+                border: "none",
+                borderRadius: "16px",
+                fontWeight: "700",
+                fontSize: "0.95rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow: "0 10px 25px rgba(59, 130, 246, 0.3)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-4px)";
+                e.target.style.boxShadow = "0 15px 35px rgba(59, 130, 246, 0.4)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 10px 25px rgba(59, 130, 246, 0.3)";
+              }}
+            >
+              <span style={{ fontSize: "1.5rem" }}>👥</span>
+              <span>Export Users</span>
+            </button>
+
+            {/* Export Assignments */}
+            <button
+              onClick={() => {
+                window.location.href = "http://localhost:5001/api/admin/export/assignments";
+                showToast("Downloading assignments data...");
+              }}
+              style={{
+                padding: "1.25rem 1.5rem",
+                background:
+                  theme === "dark"
+                    ? "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)"
+                    : "linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%)",
+                color: "#fff",
+                border: "none",
+                borderRadius: "16px",
+                fontWeight: "700",
+                fontSize: "0.95rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow: "0 10px 25px rgba(139, 92, 246, 0.3)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-4px)";
+                e.target.style.boxShadow = "0 15px 35px rgba(139, 92, 246, 0.4)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 10px 25px rgba(139, 92, 246, 0.3)";
+              }}
+            >
+              <span style={{ fontSize: "1.5rem" }}>📝</span>
+              <span>Export Assignments</span>
+            </button>
+
+            {/* Export GPA Reports */}
+            <button
+              onClick={() => {
+                window.location.href = "http://localhost:5001/api/admin/export/gpa-reports";
+                showToast("Downloading GPA reports...");
+              }}
+              style={{
+                padding: "1.25rem 1.5rem",
+                background:
+                  theme === "dark"
+                    ? "linear-gradient(135deg, #10b981 0%, #059669 100%)"
+                    : "linear-gradient(135deg, #34d399 0%, #10b981 100%)",
+                color: "#fff",
+                border: "none",
+                borderRadius: "16px",
+                fontWeight: "700",
+                fontSize: "0.95rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow: "0 10px 25px rgba(16, 185, 129, 0.3)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-4px)";
+                e.target.style.boxShadow = "0 15px 35px rgba(16, 185, 129, 0.4)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 10px 25px rgba(16, 185, 129, 0.3)";
+              }}
+            >
+              <span style={{ fontSize: "1.5rem" }}>📊</span>
+              <span>Export GPA Reports</span>
+            </button>
+
+            {/* Export Lost & Found */}
+            <button
+              onClick={() => {
+                window.location.href = "http://localhost:5001/api/admin/export/lostfound";
+                showToast("Downloading lost & found data...");
+              }}
+              style={{
+                padding: "1.25rem 1.5rem",
+                background:
+                  theme === "dark"
+                    ? "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
+                    : "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
+                color: "#fff",
+                border: "none",
+                borderRadius: "16px",
+                fontWeight: "700",
+                fontSize: "0.95rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow: "0 10px 25px rgba(245, 158, 11, 0.3)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-4px)";
+                e.target.style.boxShadow = "0 15px 35px rgba(245, 158, 11, 0.4)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 10px 25px rgba(245, 158, 11, 0.3)";
+              }}
+            >
+              <span style={{ fontSize: "1.5rem" }}>🔍</span>
+              <span>Export Lost & Found</span>
+            </button>
+
+            {/* Export All Data */}
+            <button
+              onClick={() => {
+                window.location.href = "http://localhost:5001/api/admin/export/all";
+                showToast("Downloading complete system data...");
+              }}
+              style={{
+                padding: "1.25rem 1.5rem",
+                background:
+                  theme === "dark"
+                    ? "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)"
+                    : "linear-gradient(135deg, #f87171 0%, #ef4444 100%)",
+                color: "#fff",
+                border: "none",
+                borderRadius: "16px",
+                fontWeight: "700",
+                fontSize: "0.95rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow: "0 10px 25px rgba(239, 68, 68, 0.3)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.5rem",
+                gridColumn: "span 2",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-4px)";
+                e.target.style.boxShadow = "0 15px 35px rgba(239, 68, 68, 0.4)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 10px 25px rgba(239, 68, 68, 0.3)";
+              }}
+            >
+              <span style={{ fontSize: "1.5rem" }}>💾</span>
+              <span>Export All Data (Complete)</span>
+            </button>
+          </div>
+
+          <p
+            style={{
+              textAlign: "center",
+              marginTop: "2rem",
+              fontSize: "0.875rem",
+              color: theme === "dark" ? "#94a3b8" : "#64748b",
+            }}
+          >
+            Files will be downloaded in CSV format with timestamp
+          </p>
+        </div>
       </div>
     </div>
   );

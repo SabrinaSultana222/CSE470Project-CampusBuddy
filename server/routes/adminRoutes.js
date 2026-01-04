@@ -8,6 +8,11 @@ const {
   deleteUser,
   getClubPostsForAdmin,
   updateClubPostStatus,
+  exportUsers,
+  exportAssignments,
+  exportGpaReports,
+  exportLostFoundPosts,
+  exportAllData,
 } = require("../controllers/adminController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
@@ -26,5 +31,12 @@ router.delete("/users/:id", deleteUser);
 // club posts moderation
 router.get("/club-posts", getClubPostsForAdmin);
 router.patch("/club-posts/:id/status", updateClubPostStatus);
+
+// export data routes
+router.get("/export/users", exportUsers);
+router.get("/export/assignments", exportAssignments);
+router.get("/export/gpa-reports", exportGpaReports);
+router.get("/export/lostfound", exportLostFoundPosts);
+router.get("/export/all", exportAllData);
 
 module.exports = router;

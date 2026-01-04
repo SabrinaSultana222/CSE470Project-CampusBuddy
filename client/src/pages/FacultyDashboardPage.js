@@ -1,5 +1,6 @@
 import React from "react";
 import FacultyNavbar from "../components/FacultyNavbar";
+import Notifications from "../components/Notifications";
 import { getUser, removeToken } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
@@ -73,10 +74,22 @@ const FacultyDashboardPage = () => {
           >
             <h2 style={{ margin: "0 0 12px", fontSize: 16 }}>Status</h2>
             <p style={{ margin: 0, fontSize: 14 }}>
-              You are logged in as <strong>faculty</strong>. Future features
-              (course lists, submissions, etc.) can appear here.
+              You are logged in as <strong>faculty</strong>. You can post announcements
+              and notifications for students below.
             </p>
           </div>
+        </section>
+
+        {/* Notifications & Reminders Section */}
+        <section
+          style={{
+            padding: "20px",
+            borderRadius: "12px",
+            border: "1px solid #e5e7eb",
+            background: "rgba(15,23,42,0.02)",
+          }}
+        >
+          <Notifications isFaculty={true} />
         </section>
       </main>
     </>

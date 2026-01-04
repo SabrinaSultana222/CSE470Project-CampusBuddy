@@ -220,13 +220,14 @@ const DashboardPage = () => {
                 marginTop: 16,
                 padding: 16,
                 borderRadius: 16,
-                backgroundColor: "#ffffff",
-                border: "1px solid #e5e7eb",
+                backgroundColor: theme === "dark" ? "#1f2937" : "#ffffff",
+                border: theme === "dark" ? "1px solid #374151" : "1px solid #e5e7eb",
+                color: theme === "dark" ? "#e5e7eb" : "#000000",
               }}
             >
-              <h3 style={{ marginTop: 0 }}>📅 Upcoming Events</h3>
+              <h3 style={{ marginTop: 0, color: theme === "dark" ? "#e5e7eb" : "#000000" }}>📅 Upcoming Events</h3>
 
-              <ul style={{ listStyle: "none", padding: 0 }}>
+              <ul style={{ listStyle: "none", padding: 0, color: theme === "dark" ? "#d1d5db" : "#374151" }}>
                 <li>🎓 Career Fair – 10 Oct</li>
                 <li>🎉 Club Fest – 15 Oct</li>
                 <li>💻 Hackathon – 20 Oct</li>
@@ -255,7 +256,7 @@ const DashboardPage = () => {
           
             {/* 🔔 Notifications */}
             <div style={{ marginTop: 24 }}>
-              <Notifications />
+              <Notifications isFaculty={false} />
             </div>
           </div>
         </section>
