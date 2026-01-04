@@ -1,13 +1,25 @@
 const mongoose = require("mongoose");
 
-const EventSchema = new mongoose.Schema({
-  userId: String,
-  title: String,
-  date: String,
-}, { timestamps: true });
-
-// Add indexes for better search performance
-EventSchema.index({ title: 'text' });
-EventSchema.index({ userId: 1, date: -1 });
+const EventSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: String,
+      default: "public",
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    date: {
+      type: String,
+      required: true,
+    },
+    type: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
 module.exports = mongoose.model("Event", EventSchema);

@@ -1,8 +1,10 @@
 import React from "react";
 import FacultyNavbar from "../components/FacultyNavbar";
 import Notifications from "../components/Notifications";
+import FacultySidebar from "../components/FacultySidebar";
+
 import { getUser, removeToken } from "../utils/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const FacultyDashboardPage = () => {
   const user = getUser();
@@ -17,51 +19,32 @@ const FacultyDashboardPage = () => {
     navigate("/login");
   };
 
-  return (
-    <>
-      {/* top navbar with theme toggle + links */}
-      <FacultyNavbar />
-      <main
-        style={{
-          maxWidth: "960px",
-          margin: "40px auto",
-          padding: "24px 28px",
-          borderRadius: "16px",
-          background: "var(--card-bg, #ffffff)",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.06)",
-        }}
-      >
-        <header style={{ marginBottom: "24px" }}>
-          <h1 style={{ margin: 0 }}>Faculty dashboard</h1>
-          <p style={{ marginTop: "8px", color: "#6b7280", fontSize: 14 }}>
-            Welcome back, {user?.name || "Faculty"}. Here is your account
-            overview.
-          </p>
-        </header>
+  const cardStyle = {
+    padding: "18px",
+    borderRadius: "12px",
+    background: "#ffffff",
+    border: "1px solid #e5e7eb",
+    textDecoration: "none",
+    color: "#111827",
+    fontWeight: 600,
+    textAlign: "center",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+  };
 
-        <section
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr",
-            gap: "16px",
-            marginBottom: "24px",
-          }}
-        >
-          <div
-            style={{
-              padding: "16px 18px",
-              borderRadius: "12px",
-              border: "1px solid #e5e7eb",
-              background: "rgba(15,23,42,0.02)",
-            }}
-          >
-            <h2 style={{ margin: "0 0 12px", fontSize: 16 }}>Your details</h2>
-            <p><strong>Name:</strong> {user?.name || "-"}</p>
-            <p><strong>Email:</strong> {user?.email || "-"}</p>
-            {user?.studentId && (
-              <p><strong>ID:</strong> {user.studentId}</p>
-            )}
-            <p><strong>Role:</strong> {user?.role || "faculty"}</p>
+  return (
+    <div className="dashboard-root">
+      {/* LEFT SIDEBAR */}
+      <FacultySidebar />
+
+      {/* RIGHT MAIN AREA */}
+      <main className="dashboard-main">
+        <div className="dashboard-topbar">
+          <div className="dashboard-top-left">
+            <h1 style={{ margin: 0 }}>Faculty Dashboard</h1>
+            <span className="dashboard-subtitle">
+              Welcome back, {user?.name || "Faculty"}
+            </span>
           </div>
 
           <div
@@ -74,11 +57,11 @@ const FacultyDashboardPage = () => {
           >
             <h2 style={{ margin: "0 0 12px", fontSize: 16 }}>Status</h2>
             <p style={{ margin: 0, fontSize: 14 }}>
-              You are logged in as <strong>faculty</strong>. You can post announcements
-              and notifications for students below.
+              You are logged in as <strong>faculty</strong>. You can post
+              announcements and notifications for students below.
             </p>
           </div>
-        </section>
+        </div>
 
         {/* Notifications & Reminders Section */}
         <section
@@ -91,8 +74,52 @@ const FacultyDashboardPage = () => {
         >
           <Notifications isFaculty={true} />
         </section>
+
+        {/* Faculty Details Section */}
+        <section className="dashboard-content-card">
+          {/* LEFT */}
+          <div className="dashboard-main-left">
+            <div className="welcome-banner">
+              <h2>Hello, {user?.name || "Faculty"} 👋</h2>
+              <p>
+                Manage your classes, events, reports, and student information
+                from here.
+              </p>
+            </div>
+
+            <div className="empty-widgets-box">
+              • View and manage class schedules
+              <br />
+              • Track events
+              <br />
+              • Generate reports
+              <br />
+              • Manage to-dos and FAQs
+            </div>
+          </div>
+
+          {/* RIGHT */}
+          <div className="dashboard-main-right">
+            <h3>Your details</h3>
+            <div className="detail-row">
+              <span className="detail-label">Name: </span>
+              {user?.name}
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Email: </span>
+              {user?.email}
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Role: </span>Faculty
+            </div>
+
+            <button className="btn-logout" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
+        </section>
       </main>
-    </>
+    </div>
   );
 };
 

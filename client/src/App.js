@@ -9,6 +9,13 @@ import {
 import "./App.css";
 import { useTheme } from "./context/ThemeContext";
 import { ToastProvider } from "./context/ToastContext";
+//faculty
+import FacultyEventCalendar from "./pages/faculty/FacultyEventCalendar";
+import FacultyClassSchedule from "./pages/faculty/FacultyClassSchedule";
+import FacultyTodoList from "./pages/faculty/FacultyTodoList";
+import FacultyFaqPage from "./pages/faculty/FacultyFaqPage";
+import FacultyReportPage from "./pages/faculty/FacultyReportPage";
+
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -26,6 +33,9 @@ import ClubsPage from "./pages/ClubsPage.jsx";
 import DiscussionsPage from "./pages/DiscussionsPage";
 import DiscussionDetailPage from "./pages/DiscussionDetailPage";
 import NewDiscussionPage from "./pages/NewDiscussionPage";
+
+import FacultyLayout from "./layouts/FacultyLayout";
+
 // Admin
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
@@ -128,6 +138,46 @@ const App = () => {
           {/* Faculty & club admin */}
           <Route path="/faculty" element={<FacultyDashboardPage />} />
           <Route path="/club-admin" element={<ClubAdminDashboardPage />} />
+          <Route path="/faculty/events" element={<FacultyEventCalendar />} />
+
+
+          <Route
+            path="/faculty/classes"
+            element={
+              <FacultyLayout>
+                <FacultyClassSchedule />
+              </FacultyLayout>
+            }
+          />
+
+          <Route
+            path="/faculty/todo"
+            element={
+              <FacultyLayout>
+                <FacultyTodoList />
+              </FacultyLayout>
+            }
+          />
+
+          <Route
+            path="/faculty/faq"
+            element={
+              <FacultyLayout>
+                <FacultyFaqPage />
+              </FacultyLayout>
+            }
+          />
+
+          <Route
+            path="/faculty/report"
+            element={
+              <FacultyLayout>
+                <FacultyReportPage />
+              </FacultyLayout>
+            }
+          />
+
+
 
           {/* Feature pages */}
           <Route path="/assignments" element={<Assignments />} />

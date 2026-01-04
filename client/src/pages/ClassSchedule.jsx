@@ -37,18 +37,27 @@ const ClassSchedule = () => {
       .then((data) => setUser(data));
   }, [navigate]);
 
-  // Load from localStorage
+  // Storage Key (per user)
+  const STORAGE_KEY = user
+    ? `CAMPUS_BUDDY_CLASSES_${user.id || user._id}`
+    : null;
+
+  // Load classes
   useEffect(() => {
-    const saved = localStorage.getItem("classSchedule");
+    if (!STORAGE_KEY) return;
+
+    const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       setClasses(JSON.parse(saved));
     }
-  }, []);
+  }, [STORAGE_KEY]);
 
-  // Save to localStorage
+  // Save classes
   useEffect(() => {
-    localStorage.setItem("classSchedule", JSON.stringify(classes));
-  }, [classes]);
+    if (!STORAGE_KEY) return;
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(classes));
+  }, [classes, STORAGE_KEY]);
 
   // Filter classes based on search and filters
   useEffect(() => {
@@ -78,8 +87,8 @@ const ClassSchedule = () => {
   const addClass = () => {
     if (!course || !day || !time) return;
 
-    setClasses([
-      ...classes,
+    setClasses((prev) => [
+      ...prev,
       {
         id: Date.now(),
         course,
@@ -94,7 +103,7 @@ const ClassSchedule = () => {
   };
 
   const deleteClass = (id) => {
-    setClasses(classes.filter((c) => c.id !== id));
+    setClasses((prev) => prev.filter((c) => c.id !== id));
   };
 
   if (!user) return <p style={{ padding: 24 }}>Loading...</p>;
@@ -136,7 +145,6 @@ const ClassSchedule = () => {
 
   return (
     <section className="dashboard-content-card feature-page">
-      {/* Header */}
       <div className="feature-header">
         <h2 className="feature-title">Class Schedule</h2>
       </div>
@@ -180,11 +188,7 @@ const ClassSchedule = () => {
           onChange={(e) => setTime(e.target.value)}
         />
 
-        <button
-          className="btn-primary"
-          style={{ width: "auto" }}
-          onClick={addClass}
-        >
+        <button className="btn-primary" onClick={addClass}>
           Add
         </button>
       </div>
@@ -201,24 +205,25 @@ const ClassSchedule = () => {
       ) : null}
 
       {/* Class cards */}
-      {filteredClasses.map((c) => (
-        <div key={c.id} className="feature-card">
-          <div>
-            <h4 style={{ margin: 0 }}>{c.course}</h4>
-            <p style={{ margin: "4px 0", color: "#6b7280" }}>
-              {c.day} · {c.time}
-            </p>
-          </div>
+      <section>
+        {filteredClasses.map((c) => (
+          <div key={c.id} className="feature-card">
+            <div>
+              <h4 style={{ margin: 0 }}>{c.course}</h4>
+              <p style={{ margin: "4px 0", color: "#6b7280" }}>
+                {c.day} · {c.time}
+              </p>
+            </div>
 
-          <button
-            className="btn-danger"
-            style={{ marginTop: 8 }}
-            onClick={() => deleteClass(c.id)}
-          >
-            Delete
-          </button>
-        </div>
-      ))}
+            <button
+              className="btn-danger"
+              onClick={() => deleteClass(c.id)}
+            >
+              Delete
+            </button>
+          </div>
+        ))}
+      </section>
     </section>
   );
 };
