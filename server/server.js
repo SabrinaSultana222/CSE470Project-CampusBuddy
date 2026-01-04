@@ -1,4 +1,7 @@
 const express = require("express");
+const faqRoutes = require("./routes/faqRoutes");
+const eventRoutes = require("./routes/eventRoutes");
+
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -57,6 +60,9 @@ app.use("/api/lost-found", lostFoundRoutes);
 app.use("/api/comments", commentsRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/users", usersRoutes);
+app.use("/api/faqs", faqRoutes);
+app.use("/api/events", eventRoutes);
+
 app.use("/api", discussionRoutes);
 
 // DISCUSSION NOTIFICATION ROUTES

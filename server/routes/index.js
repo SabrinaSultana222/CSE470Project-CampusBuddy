@@ -11,6 +11,7 @@ router.get('/health', (req, res) => {
 
 // Mount FAQ routes at /api/faqs
 router.use('/faqs', faqRoutes);
+router.use("/todos", require("./todoRoutes"));
 
 // Later: you can add other routes like:
 // router.use('/users', require('./user.routes'));

@@ -1,13 +1,8 @@
-const express = require("express");
-const router = express.Router();
+const mongoose = require("mongoose");
 
-const faqs = [
-  { question: "How to add class?", answer: "Go to Class Schedule page." },
-  { question: "How to add task?", answer: "Go to To-Do List page." }
-];
-
-router.get("/", (req, res) => {
-  res.json(faqs);
+const faqSchema = new mongoose.Schema({
+  question: { type: String, required: true },
+  answer: { type: String, required: true },
 });
 
-module.exports = router;
+module.exports = mongoose.model("Faq", faqSchema);

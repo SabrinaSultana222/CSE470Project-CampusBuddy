@@ -1,114 +1,147 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 
-const FaqPage = () => {
-  const [faqs, setFaqs] = useState([]);
+const FacultyFaqPage = () => {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
   const [openIndex, setOpenIndex] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:5001/api/faqs")
-      .then((res) => {
-        setFaqs(res.data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Failed to load FAQs");
-        setLoading(false);
-      });
-  }, []);
+  const faqs = [
+    {
+      question: "How do I generate reports?",
+      answer:
+        "Go to the Report Generator section from the sidebar, select the required parameters and click Generate.",
+    },
+    {
+      question: "Can I edit my class schedule?",
+      answer:
+        "Yes. Open Class Schedule from the faculty dashboard and update or delete existing entries.",
+    },
+    {
+      question: "Where can I see upcoming events?",
+      answer:
+        "All upcoming academic and faculty events are available in the Event Calendar section.",
+    },
+    {
+      question: "How does the To-Do List work?",
+      answer:
+        "You can add, mark complete, or delete tasks. Your tasks are saved automatically.",
+    },
+  ];
 
-  const filteredFaqs = faqs.filter((faq) => {
-    const matchesSearch = faq.question
-      .toLowerCase()
-      .includes(search.toLowerCase());
-
-    const matchesCategory =
-      category === "All" || faq.category === category;
-
-    return matchesSearch && matchesCategory;
-  });
+  const filteredFaqs = faqs.filter((faq) =>
+    faq.question.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <section className="dashboard-content-card feature-page">
       {/* Header */}
-      <div className="feature-header">
-        <h2 className="feature-title">
-          Help & Frequently Asked Questions
+      <div style={{ marginBottom: 20 }}>
+        <h2 style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          ❓ Faculty FAQ
         </h2>
-      </div>
-
-      {/* Controls */}
-      <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
-        <input
-          className="form-control"
-          placeholder="Search your question..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ flex: 1 }}
-        />
-
-        <select
-          className="form-select"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        >
-          <option value="All">All</option>
-          <option value="Academic">Academic</option>
-          <option value="System">System</option>
-          <option value="General">General</option>
-        </select>
-      </div>
-
-      {/* States */}
-      {loading && <p>Loading FAQs...</p>}
-
-      {error && (
-        <p style={{ color: "#dc2626", fontWeight: 600 }}>
-          {error}
+        <p style={{ color: "#6b7280" }}>
+          Frequently asked questions for faculty members.
         </p>
-      )}
+      </div>
 
-      {!loading && filteredFaqs.length === 0 && (
-        <div className="feature-empty">
-          No matching questions found.
-        </div>
-      )}
-
-      {/* FAQ LIST */}
-      {filteredFaqs.map((faq, index) => (
+      {/* Main Layout */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1.2fr",
+          gap: 24,
+        }}
+      >
+        {/* LEFT SEARCH BOX */}
         <div
-          key={index}
-          className="feature-card"
-          onClick={() =>
-            setOpenIndex(openIndex === index ? null : index)
-          }
+          style={{
+            border: "1px solid #e5e7eb",
+            borderRadius: 12,
+            padding: 20,
+            background: "#fff",
+          }}
         >
-          <h4 style={{ margin: 0 }}>{faq.question}</h4>
+          <input
+            className="form-control"
+            placeholder="Search a question..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
-          {faq.category && (
-            <span className="feature-badge">
-              {faq.category}
-            </span>
+          <p
+            style={{
+              marginTop: 16,
+              fontSize: 13,
+              color: "#6b7280",
+            }}
+          >
+            Type keywords to quickly find answers related to faculty features.
+          </p>
+        </div>
+
+        {/* RIGHT FAQ LIST */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {filteredFaqs.length === 0 && (
+            <div className="feature-empty">
+              No matching questions found.
+            </div>
           )}
 
-          <div
-            className={`faq-answer ${
-              openIndex === index ? "open" : "closed"
-            }`}
-          >
-            <p style={{ marginTop: 10, color: "#374151" }}>
-              {faq.answer}
-            </p>
-          </div>
+          {filteredFaqs.map((faq, index) => {
+            const isOpen = openIndex === index;
+
+            return (
+              <div
+                key={index}
+                onClick={() =>
+                  setOpenIndex(isOpen ? null : index)
+                }
+                style={{
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 12,
+                  padding: 16,
+                  cursor: "pointer",
+                  background: "#fff",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <h4 style={{ margin: 0 }}>{faq.question}</h4>
+                  <span
+                    style={{
+                      fontSize: 20,
+                      transform: isOpen
+                        ? "rotate(45deg)"
+                        : "rotate(0deg)",
+                      transition: "0.2s",
+                    }}
+                  >
+                    +
+                  </span>
+                </div>
+
+                {isOpen && (
+                  <p
+                    style={{
+                      marginTop: 12,
+                      color: "#374151",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {faq.answer}
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </div>
-      ))}
+      </div>
     </section>
   );
 };
 
-export default FaqPage;
+export default FacultyFaqPage;

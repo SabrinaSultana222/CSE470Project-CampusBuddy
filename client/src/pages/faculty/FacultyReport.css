@@ -1,0 +1,15 @@
+.generate-btn {
+  padding: 10px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  width: auto;
+  height: auto;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.generate-btn:hover {
+  background-color: #1d4ed8;
+}

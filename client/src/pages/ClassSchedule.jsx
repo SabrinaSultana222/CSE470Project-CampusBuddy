@@ -11,7 +11,7 @@ const ClassSchedule = () => {
 
   const navigate = useNavigate();
 
-  // Auth check
+  // 🔐 AUTH CHECK
   useEffect(() => {
     fetch("http://localhost:5001/api/auth/me", {
       credentials: "include",
@@ -26,24 +26,33 @@ const ClassSchedule = () => {
       .then((data) => setUser(data));
   }, [navigate]);
 
-  // Load from localStorage
+  // 🧠 STORAGE KEY (PER USER)
+  const STORAGE_KEY = user
+    ? `CAMPUS_BUDDY_CLASSES_${user.id || user._id}`
+    : null;
+
+  // 📥 LOAD CLASSES
   useEffect(() => {
-    const saved = localStorage.getItem("classSchedule");
+    if (!STORAGE_KEY) return;
+
+    const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       setClasses(JSON.parse(saved));
     }
-  }, []);
+  }, [STORAGE_KEY]);
 
-  // Save to localStorage
+  // 💾 SAVE CLASSES
   useEffect(() => {
-    localStorage.setItem("classSchedule", JSON.stringify(classes));
-  }, [classes]);
+    if (!STORAGE_KEY) return;
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(classes));
+  }, [classes, STORAGE_KEY]);
 
   const addClass = () => {
     if (!course || !day || !time) return;
 
-    setClasses([
-      ...classes,
+    setClasses((prev) => [
+      ...prev,
       {
         id: Date.now(),
         course,
@@ -58,19 +67,18 @@ const ClassSchedule = () => {
   };
 
   const deleteClass = (id) => {
-    setClasses(classes.filter((c) => c.id !== id));
+    setClasses((prev) => prev.filter((c) => c.id !== id));
   };
 
   if (!user) return <p style={{ padding: 24 }}>Loading...</p>;
 
   return (
     <section className="dashboard-content-card feature-page">
-      {/* Header */}
       <div className="feature-header">
         <h2 className="feature-title">Class Schedule</h2>
       </div>
 
-      {/* Add class */}
+      {/* ADD CLASS */}
       <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
         <input
           className="form-control"
@@ -99,23 +107,15 @@ const ClassSchedule = () => {
           onChange={(e) => setTime(e.target.value)}
         />
 
-        <button
-          className="btn-primary"
-          style={{ width: "auto" }}
-          onClick={addClass}
-        >
+        <button className="btn-primary" onClick={addClass}>
           Add
         </button>
       </div>
 
-      {/* Empty state */}
       {classes.length === 0 && (
-        <div className="feature-empty">
-          No classes added yet.
-        </div>
+        <div className="feature-empty">No classes added yet.</div>
       )}
 
-      {/* Class cards */}
       {classes.map((c) => (
         <div key={c.id} className="feature-card">
           <div>
@@ -127,7 +127,6 @@ const ClassSchedule = () => {
 
           <button
             className="btn-danger"
-            style={{ marginTop: 8 }}
             onClick={() => deleteClass(c.id)}
           >
             Delete

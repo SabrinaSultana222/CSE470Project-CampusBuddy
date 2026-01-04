@@ -531,3 +531,62 @@ button {
 .home-root.dark .home-about {
   color: #9ca3af;
 }
+/* ============================= */
+/* FACULTY + DASHBOARD SIDEBAR */
+/* ============================= */
+
+.dashboard-sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0f172a, #1e3a8a);
+  padding: 20px 16px;
+  color: #e5e7eb;
+}
+
+.sidebar-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 28px;
+}
+
+.sidebar-section-title {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c7d2fe;
+  margin: 16px 0 8px;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-item {
+  margin-bottom: 6px;
+}
+
+.sidebar-item a {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #e5e7eb;        /* 🔥 READABLE TEXT */
+  font-size: 15px;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-item a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.sidebar-item a.active {
+  background: rgba(59, 130, 246, 0.35);
+  color: #ffffff;
+  font-weight: 600;
+}
+
