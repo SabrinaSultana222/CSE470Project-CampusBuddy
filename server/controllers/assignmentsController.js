@@ -6,13 +6,20 @@ exports.addAssignment = async (req, res) => {
   try {
     console.log('📝 Adding assignment:', req.body);
     console.log('👤 User:', req.user ? req.user._id : 'NO USER');
+    
+    if (!req.user || !req.user._id) {
+      console.error('❌ No user found in request');
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+    
     const assignment = new Assignment({ ...req.body, userId: req.user._id });
     await assignment.save();
     console.log('✅ Assignment saved:', assignment._id);
     res.json({ success: true, assignment });
   } catch (err) {
     console.error('❌ Error saving assignment:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error('❌ Stack trace:', err.stack);
+    res.status(500).json({ error: err.message || 'Failed to save assignment' });
   }
 };
 

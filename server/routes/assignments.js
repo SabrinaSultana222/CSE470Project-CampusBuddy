@@ -42,12 +42,7 @@ router.post(
   auth,
   [
     body('title').notEmpty().withMessage('Title is required'),
-    body('dueDate').notEmpty().withMessage('dueDate is required').bail().isISO8601().withMessage('dueDate must be a valid date').bail().custom((value) => {
-      const d = new Date(value);
-      const now = new Date();
-      if (d < new Date(now.toDateString())) throw new Error('dueDate must not be in the past');
-      return true;
-    }),
+    body('dueDate').notEmpty().withMessage('dueDate is required').bail().isISO8601().withMessage('dueDate must be a valid date'),
     body('course').notEmpty().withMessage('Course is required'),
   ],
   validate,

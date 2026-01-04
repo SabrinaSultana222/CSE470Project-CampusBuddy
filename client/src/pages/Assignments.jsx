@@ -190,13 +190,26 @@ const Assignments = () => {
         toast.showToast('Assignment added', 'success');
       } catch (err) {
         console.error('❌ Error adding assignment:', err);
-        console.warn('Failed to add assignment to server', err);
-        if (err && err.errors) {
+        console.error('❌ Error details:', JSON.stringify(err, null, 2));
+        
+        // Handle validation errors from server
+        if (err && err.errors && Array.isArray(err.errors)) {
           const apiErrors = {};
-          err.errors.forEach(e => { apiErrors[e.param] = e.msg; });
-          setErrors({ title: apiErrors.title || '', dueDate: apiErrors.dueDate || '', course: apiErrors.course || '' });
+          err.errors.forEach(e => { 
+            apiErrors[e.param || e.path] = e.msg || e.message; 
+          });
+          setErrors(apiErrors);
+          
+          // Show first error in toast
+          const firstError = err.errors[0];
+          const errorMsg = firstError.msg || firstError.message || 'Validation failed';
+          toast.showToast(errorMsg, 'error');
+        } else if (err && err.error) {
+          toast.showToast(err.error, 'error');
+        } else if (err && err.message) {
+          toast.showToast(err.message, 'error');
         } else {
-          toast.showToast(err && err.error ? err.error : 'Failed to add assignment', 'error');
+          toast.showToast('Failed to add assignment', 'error');
         }
       } finally { setLoading(false); }
     } else {
