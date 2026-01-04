@@ -36,7 +36,7 @@ const FacultyFaqPage = () => {
       {/* Header */}
       <div style={{ marginBottom: 20 }}>
         <h2 style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          ❓ Faculty FAQ
+          ❓ FAQ
         </h2>
         <p style={{ color: "#6b7280" }}>
           Frequently asked questions for faculty members.

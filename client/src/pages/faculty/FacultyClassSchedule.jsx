@@ -1,34 +1,49 @@
 import React, { useEffect, useState } from "react";
 
+const STORAGE_KEY = "facultyClasses";
+
 const FacultyClassSchedule = () => {
   const [course, setCourse] = useState("");
   const [day, setDay] = useState("");
   const [time, setTime] = useState("");
+  const [error, setError] = useState("");
+
   const [classes, setClasses] = useState(() => {
-    return JSON.parse(localStorage.getItem("facultyClasses")) || [];
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
   });
 
   // Save to localStorage
   useEffect(() => {
-    localStorage.setItem("facultyClasses", JSON.stringify(classes));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(classes));
   }, [classes]);
 
   const addClass = () => {
-    if (!course || !day || !time) return;
+    if (!course || !day || !time) {
+      setError("Please enter course name, day, and time.");
+      return;
+    }
 
-    setClasses([
-      ...classes,
-      {
-        id: Date.now(),
-        course,
-        day,
-        time,
-      },
-    ]);
+    setClasses((prev) =>
+      [...prev, { id: Date.now(), course, day, time }]
+        .sort((a, b) => {
+          const days = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+          ];
+          if (a.day !== b.day) {
+            return days.indexOf(a.day) - days.indexOf(b.day);
+          }
+          return a.time.localeCompare(b.time);
+        })
+    );
 
     setCourse("");
     setDay("");
     setTime("");
+    setError("");
   };
 
   const deleteClass = (id) => {
@@ -38,7 +53,7 @@ const FacultyClassSchedule = () => {
   return (
     <section className="dashboard-content-card" style={{ maxWidth: 900 }}>
       <h2>📚 Faculty Class Schedule</h2>
-      <p style={{ color: "#6b7280", marginBottom: 20 }}>
+      <p style={{ color: "#6b7280", marginBottom: 24 }}>
         Manage your assigned courses and teaching schedule.
       </p>
 
@@ -47,8 +62,8 @@ const FacultyClassSchedule = () => {
         style={{
           display: "grid",
           gridTemplateColumns: "2fr 1fr 1fr auto",
-          gap: 10,
-          marginBottom: 20,
+          gap: 12,
+          marginBottom: 12,
         }}
       >
         <input
@@ -63,7 +78,7 @@ const FacultyClassSchedule = () => {
           value={day}
           onChange={(e) => setDay(e.target.value)}
         >
-          <option value="">Day</option>
+          <option value="">Select day</option>
           <option>Sunday</option>
           <option>Monday</option>
           <option>Tuesday</option>
@@ -81,7 +96,7 @@ const FacultyClassSchedule = () => {
         <button
           onClick={addClass}
           style={{
-            padding: "8px 14px",
+            padding: "8px 16px",
             borderRadius: 8,
             border: "none",
             background: "#2563eb",
@@ -95,11 +110,19 @@ const FacultyClassSchedule = () => {
         </button>
       </div>
 
+      {error && (
+        <p style={{ color: "#dc2626", fontSize: 14, marginBottom: 12 }}>
+          {error}
+        </p>
+      )}
+
       {/* CLASS LIST */}
       {classes.length === 0 ? (
-        <div className="empty-widgets-box">No classes assigned yet.</div>
+        <div className="empty-widgets-box">
+          📭 No classes assigned yet.
+        </div>
       ) : (
-        <div style={{ display: "grid", gap: 10 }}>
+        <div style={{ display: "grid", gap: 12 }}>
           {classes.map((c) => (
             <div
               key={c.id}
@@ -107,14 +130,14 @@ const FacultyClassSchedule = () => {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                padding: "12px 16px",
+                padding: "14px 18px",
                 borderRadius: 10,
                 border: "1px solid #e5e7eb",
                 background: "#ffffff",
               }}
             >
               <div>
-                <strong>{c.course}</strong>
+                <strong style={{ fontSize: 15 }}>{c.course}</strong>
                 <div style={{ fontSize: 13, color: "#6b7280" }}>
                   {c.day} · {c.time}
                 </div>
@@ -127,7 +150,7 @@ const FacultyClassSchedule = () => {
                   color: "white",
                   border: "none",
                   borderRadius: 6,
-                  padding: "6px 10px",
+                  padding: "6px 12px",
                   fontSize: 13,
                   cursor: "pointer",
                 }}
