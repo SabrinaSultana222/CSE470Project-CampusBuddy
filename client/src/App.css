@@ -1,38 +1,592 @@
-.App {
+.app {
+  min-height: 100vh;
+  padding: 0;                    /* no global padding */
+  transition: all 0.3s ease;
+  font-family: Arial, sans-serif;
+}
+
+.light {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.dark {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  border: none;
+}
+
+/* ============================= */
+/* DASHBOARD THEME FIXES */
+/* ============================= */
+
+.dashboard-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Student ID pill */
+.user-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+/* Theme toggle button */
+.theme-toggle-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #111827;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* 🌙 DARK MODE OVERRIDES */
+.app.dark .user-chip {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.app.dark .theme-toggle-btn {
+  background-color: #111827;
+  color: #f9fafb;
+  border: 1px solid #374151;
+}
+
+/* Optional: smoother hover */
+.theme-toggle-btn:hover {
+  opacity: 0.9;
+}
+
+/* ============================= */
+/* AUTH CARD (LOGIN / REGISTER) */
+/* ============================= */
+
+.auth-container {
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto 40px;           /* small bottom margin, no scroll */
+  padding: 20px 28px 28px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-container .top-nav {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Back button in auth header */
+.auth-back-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  color: #111827;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 0;                 /* override global button margin */
+}
+
+/* Center title + tabs wrapper */
+.auth-header-center {
+  flex: 1;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Small nav for Login / Register tabs */
+.nav-links {
+  display: inline-flex;
+  gap: 12px;
+  font-size: 0.9rem;
+  margin-top: 4px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.nav-links a {
+  color: #6b7280;
+  text-decoration: none;
 }
 
-.App-header {
-  background-color: #282c34;
+.nav-links a.active {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+/* Dark mode version */
+.app.dark .auth-container {
+  background: #111827;
+  color: #f9fafb;
+}
+
+.app.dark .auth-back-btn {
+  background: #020617;
+  border-color: #374151;
+  color: #e5e7eb;
+}
+
+/* ============================= */
+/* Feature Pages (FAQ, Todo, Class, Events, Report) */
+/* ============================= */
+
+.feature-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.feature-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.feature-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Card list item (FAQ, Todo, Class, Event items) */
+.feature-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+}
+
+/* Small badge (category, status, etc.) */
+.feature-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #eef2ff;
+  color: #1d4ed8;
+}
+
+/* FAQ Answer animation */
+.faq-answer {
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+
+.faq-answer.closed {
+  max-height: 0;
+}
+
+.faq-answer.open {
+  max-height: 500px;
+}
+
+/* Empty state */
+.feature-empty {
+  border: 1px dashed #d1d5db;
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  background-color: #f9fafb;
+}
+
+/* Clubs page layout */
+.clubs-page-root {
+  background-color: #f3f4f6;
   min-height: 100vh;
+}
+
+.clubs-page-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+.clubs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.clubs-title-main {
+  margin: 0;
+}
+
+.clubs-subtitle {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.clubs-back-btn {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background-color: #e5e7eb;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+/* Filters */
+.clubs-filters {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0 20px;
+}
+
+.clubs-search {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+.clubs-select {
+  width: 160px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+/* States */
+.clubs-state {
+  text-align: center;
+  margin-top: 24px;
+  color: #6b7280;
+}
+
+.clubs-state-error {
+  color: #b91c1c;
+}
+
+/* Cards */
+.clubs-list {
   display: flex;
   flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.clubs-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+.clubs-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.clubs-club-name {
+  font-weight: 600;
+  color: #111827;
+}
+
+.clubs-chip {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  text-transform: uppercase;
+}
+
+.clubs-card-title {
+  margin: 4px 0 6px;
+  font-size: 1.05rem;
+}
+
+.clubs-card-desc {
+  margin: 0 0 10px;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.clubs-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* ============================= */
+/* HOME PAGE THEMING */
+/* ============================= */
+
+.home-root.dark {
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, #1f2937, #020617);
+  color: #e5e7eb;
+}
+
+.home-root.light {
+  min-height: 100vh;
+  background: #f9fafb;          /* slightly lighter background for contrast */
+  color: #0f172a;               /* darker body text */
+}
+
+.home-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 48px;
+  background: rgba(15, 23, 42, 0.95);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.home-logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.home-logo-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: 16px;
+  color: #f9fafb;
+}
+
+/* Make logo text always readable */
+.home-logo {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #f9fafb;
+}
+
+/* Ensure right nav items sit perfectly side by side */
+.home-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.home-links a,
+.home-links button {
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 4px 0;
+}
+
+.home-theme-btn {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  margin-top: 0;                /* override global button margin */
+}
+
+/* reuse in auth header */
+.app.dark .home-theme-btn {
+  background: #020617;
+  color: #facc15;
+}
+.app.light .home-theme-btn {
+  background: #ffffff;
+  color: #111827;
+}
+
+.home-hero {
+  max-width: 1100px;
+  margin: 40px auto 32px;
+  padding: 0 32px;
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.home-hero-left h1 {
+  font-size: 2.4rem;
+  margin-bottom: 12px;
+  color: #020617;               /* strong heading in both themes */
+}
+
+.home-root.dark .home-hero-left h1 {
+  color: #f9fafb;
+}
+
+.home-hero-sub {
+  color: #4b5563;               /* darker paragraph for light mode */
+  max-width: 480px;
+}
+
+.home-root.dark .home-hero-sub {
+  color: #9ca3af;
+}
+
+.home-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.15);
+  color: #1d4ed8;               /* readable in light mode */
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+}
+
+.home-root.dark .home-pill {
+  color: #bfdbfe;
+}
+
+.home-hero-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+}
+
+.home-primary-btn {
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
   color: white;
+  cursor: pointer;
 }
 
-.App-link {
-  color: #61dafb;
+.home-ghost-btn {
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid #9ca3af;   /* softer border for light mode */
+  background: transparent;
+  color: #0f172a;
+  cursor: pointer;
+  margin-top: 0;                /* override global button margin */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.home-root.dark .home-ghost-btn {
+  border-color: #4b5563;
+  color: #e5e7eb;
 }
+
+.home-hero-right .home-hero-card {
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 24px;
+  padding: 20px 24px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.7);
+}
+
+.home-hero-card h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.home-hero-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #d1d5db;
+  font-size: 0.9rem;
+}
+
+.home-about {
+  max-width: 900px;
+  margin: 32px auto 40px;
+  padding: 0 32px 32px;
+  text-align: center;
+  color: #4b5563;               /* darker about text in light mode */
+}
+
+.home-root.dark .home-about {
+  color: #9ca3af;
+}
+/* ============================= */
+/* FACULTY + DASHBOARD SIDEBAR */
+/* ============================= */
+
+.dashboard-sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0f172a, #1e3a8a);
+  padding: 20px 16px;
+  color: #e5e7eb;
+}
+
+.sidebar-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 28px;
+}
+
+.sidebar-section-title {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c7d2fe;
+  margin: 16px 0 8px;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-item {
+  margin-bottom: 6px;
+}
+
+.sidebar-item a {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #e5e7eb;        /* 🔥 READABLE TEXT */
+  font-size: 15px;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-item a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.sidebar-item a.active {
+  background: rgba(59, 130, 246, 0.35);
+  color: #ffffff;
+  font-weight: 600;
+}
+

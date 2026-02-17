@@ -1,0 +1,157 @@
+
+/* ProfileSettings.css - scoped styles for ProfileSettings component */
+
+/* Use the global CSS custom properties defined in `global.css` so dark mode works */
+
+.profile-settings {
+  padding: var(--spacing-2xl) 1rem;
+}
+
+.profile-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+.page-title {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-text);
+}
+
+.profile-layout {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+}
+
+/* Sidebar (avatar + basic info) */
+.profile-sidebar {
+  flex: 1 1 280px;
+}
+
+.avatar-section {
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 18px var(--color-shadow);
+  padding: var(--spacing-md);
+  text-align: center;
+}
+
+.avatar-section .avatar--lg {
+  margin: 0 auto;
+  display: block;
+}
+
+.user-info {
+  margin-top: var(--spacing-sm);
+}
+
+.user-info h2 {
+  font-size: var(--font-size-xl);
+  color: var(--color-text);
+}
+
+.user-info p {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.user-info .student-id {
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  margin-top: 0.25rem;
+}
+
+/* Main area for forms */
+.profile-main {
+  flex: 2 1 600px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.form-card {
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: 0 6px 18px var(--color-shadow);
+}
+
+.form-title {
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text);
+}
+
+.profile-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.profile-form .input-wrapper,
+.profile-form .select-wrapper {
+  grid-column: span 1;
+}
+
+.profile-form .textarea {
+  grid-column: 1 / -1;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: inherit;
+}
+
+.checkbox-group {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text);
+}
+
+.profile-form button.btn--lg {
+  grid-column: 1 / -1;
+}
+
+.form-card + .form-card {
+  margin-top: 0px;
+}
+
+/* Small screens: stack fields */
+@media (max-width: 768px) {
+  .profile-layout {
+    flex-direction: column;
+  }
+
+  .profile-form {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-settings {
+    padding: var(--spacing-xl) 1rem;
+  }
+}
+
+/* Subtle element focus states */
+.profile-form .input:focus,
+.profile-form .select:focus,
+.profile-form .textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.08);
+  border-color: var(--color-primary);
+}
+
+/* Accessibility helpers */
+.input-error,
+.select-error {
+  color: var(--color-danger);
+  font-size: 12px;
+}
+
+/* Keep component styles separate: avoid overriding component-level classes like .avatar, .btn, .input */
+
+  
