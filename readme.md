@@ -300,5 +300,5 @@ The database stores information related to:
 ┌─────────────────────────────────────────────┐
 │                  DATA LAYER                 │
 │                                             │
-│              MongoDB         │
+│                   MongoDB         
 └─────────────────────────────────────────────┘
